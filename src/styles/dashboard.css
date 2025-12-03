@@ -87,8 +87,8 @@
 .summary-cards-section {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 12px;
-  margin-bottom: 16px;
+  gap: 10px;
+  margin-bottom: 12px;
   grid-column: 1;
 }
 
@@ -139,7 +139,7 @@
 .tables-container {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 16px;
+  gap: 12px;
   grid-column: 1;
 }
 
