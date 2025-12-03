@@ -9,13 +9,13 @@
 
 .summary-card {
   background: var(--white);
-  border-radius: 12px;
-  padding: 24px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  padding: 14px 16px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
   display: flex;
   justify-content: space-between;
   align-items: center;
-  min-height: 140px;
+  min-height: 85px;
   position: relative;
   overflow: hidden;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
@@ -32,15 +32,16 @@
 }
 
 .card-title {
-  font-size: 14px;
-  font-weight: 500;
+  font-size: 11px;
+  font-weight: 600;
   color: #666666;
-  margin-bottom: 8px;
-  letter-spacing: 0.3px;
+  margin-bottom: 4px;
+  letter-spacing: 0.2px;
+  text-transform: uppercase;
 }
 
 .card-count {
-  font-size: 48px;
+  font-size: 28px;
   font-weight: 700;
   margin: 0;
   background: linear-gradient(135deg, var(--primary-blue) 0%, var(--dark-blue) 100%);
@@ -50,13 +51,13 @@
 }
 
 .card-icon {
-  font-size: 60px;
-  opacity: 0.2;
+  font-size: 40px;
+  opacity: 0.15;
   display: flex;
   align-items: center;
   justify-content: center;
   position: absolute;
-  right: -10px;
+  right: -5px;
   top: 50%;
   transform: translateY(-50%);
 }
