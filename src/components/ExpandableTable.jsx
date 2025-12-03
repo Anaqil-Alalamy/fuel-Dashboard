@@ -19,7 +19,6 @@ export default function ExpandableTable({ title, data, isExpanded, onToggle, sta
           <table className="sites-table">
             <thead>
               <tr>
-                <th>Site ID</th>
                 <th>Site Name</th>
                 <th>Date</th>
               </tr>
@@ -27,7 +26,6 @@ export default function ExpandableTable({ title, data, isExpanded, onToggle, sta
             <tbody>
               {data.map((site) => (
                 <tr key={site.id}>
-                  <td>{site.id}</td>
                   <td>{site.siteName}</td>
                   <td>{site.date}</td>
                 </tr>
