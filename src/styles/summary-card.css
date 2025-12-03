@@ -80,30 +80,30 @@
 
 @media (max-width: 768px) {
   .summary-card {
-    padding: 16px;
-    min-height: 120px;
+    padding: 12px 14px;
+    min-height: 80px;
   }
 
   .card-count {
-    font-size: 36px;
+    font-size: 24px;
   }
 
   .card-icon {
-    font-size: 48px;
+    font-size: 36px;
   }
 }
 
 @media (max-width: 480px) {
   .summary-card {
-    padding: 12px;
-    min-height: 100px;
+    padding: 10px 12px;
+    min-height: 75px;
   }
 
   .card-count {
-    font-size: 28px;
+    font-size: 22px;
   }
 
   .card-icon {
-    font-size: 36px;
+    font-size: 32px;
   }
 }
