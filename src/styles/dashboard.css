@@ -231,15 +231,33 @@
 /* Responsive Design */
 @media (max-width: 1200px) {
   .map-and-tables-wrapper {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr 40%;
   }
 
   .site-map-container {
-    height: 400px;
+    height: 35vh;
   }
 
   .summary-cards-section {
     grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 1024px) {
+  .map-and-tables-wrapper {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .site-map-container {
+    height: 400px;
+    grid-column: 1;
+    grid-row: auto;
+  }
+
+  .tables-container {
+    grid-column: 1;
+    grid-row: auto;
   }
 }
 
