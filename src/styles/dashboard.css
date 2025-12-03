@@ -359,12 +359,30 @@
 
   .header-content {
     flex-direction: column;
-    gap: 16px;
-    align-items: flex-start;
+    gap: 12px;
+    align-items: center;
+    padding: 12px 20px;
+  }
+
+  .header-logo-section {
+    width: 60px;
+    height: 60px;
+  }
+
+  .header-logo {
+    height: 50px;
+  }
+
+  .header-center {
+    text-align: center;
   }
 
   .dashboard-title {
-    font-size: 24px;
+    font-size: 20px;
+  }
+
+  .dashboard-subtitle {
+    font-size: 12px;
   }
 
   .section-navigation {
