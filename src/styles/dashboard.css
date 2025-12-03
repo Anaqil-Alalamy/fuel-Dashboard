@@ -106,9 +106,11 @@
 }
 
 .site-map-container {
-  height: 35vh;
+  height: calc(100vh - 80px);
   grid-column: 2;
   grid-row: 1 / 3;
+  position: sticky;
+  top: 80px;
 }
 
 .tables-container {
