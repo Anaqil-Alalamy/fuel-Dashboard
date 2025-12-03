@@ -18,7 +18,18 @@ export default function Login({ onLoginSuccess }) {
         throw new Error('Please enter both email and password')
       }
 
-      console.log('Login attempt:', { email, password, rememberMe })
+      const validUsername = 'Hamdey'
+      const validPassword = '123456'
+
+      if (email !== validUsername && email !== validUsername.toLowerCase()) {
+        throw new Error('Invalid username or password')
+      }
+
+      if (password !== validPassword) {
+        throw new Error('Invalid username or password')
+      }
+
+      console.log('Login successful:', { email, rememberMe })
       await new Promise(resolve => setTimeout(resolve, 1500))
 
       if (onLoginSuccess) {
