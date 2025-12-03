@@ -89,19 +89,23 @@
 
 .map-and-tables-wrapper {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr 35%;
   gap: 30px;
   align-items: start;
 }
 
 .site-map-container {
-  height: 600px;
+  height: 35vh;
+  grid-column: 2;
+  grid-row: 1;
 }
 
 .tables-container {
   display: flex;
   flex-direction: column;
   gap: 16px;
+  grid-column: 1;
+  grid-row: 1;
 }
 
 .section-navigation {
