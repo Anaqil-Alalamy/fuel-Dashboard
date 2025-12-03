@@ -316,6 +316,17 @@
     gap: 20px;
   }
 
+  .left-content-panel {
+    height: auto;
+    overflow-y: visible;
+    overflow-x: hidden;
+    padding-right: 0;
+  }
+
+  .left-content-panel::-webkit-scrollbar {
+    display: none;
+  }
+
   .header-content {
     flex-direction: column;
     gap: 16px;
