@@ -385,7 +385,7 @@
   }
 
   .left-content-panel {
-    gap: 15px;
+    gap: 12px;
     height: auto;
     overflow-y: visible;
     overflow-x: hidden;
@@ -422,8 +422,12 @@
   }
 
   .summary-cards-section {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+
+  .tables-container {
     grid-template-columns: 1fr;
-    gap: 12px;
   }
 
   .site-map-container {
