@@ -63,13 +63,13 @@ export default function Login({ onLoginSuccess }) {
         <form onSubmit={handleSubmit} className="login-form">
           <div className="form-group">
             <label htmlFor="email" className="form-label">
-              Email Address
+              Username
             </label>
             <input
-              type="email"
+              type="text"
               id="email"
               className="form-input"
-              placeholder="Enter your email"
+              placeholder="Enter your username"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
