@@ -247,7 +247,7 @@
   }
 
   .site-map-container {
-    height: 35vh;
+    height: calc(100vh - 80px);
   }
 
   .summary-cards-section {
@@ -269,6 +269,8 @@
     height: 400px;
     grid-column: 1;
     grid-row: auto;
+    position: static;
+    top: auto;
   }
 
   .summary-cards-section {
@@ -320,6 +322,8 @@
     height: 350px;
     grid-column: 1;
     grid-row: auto;
+    position: static;
+    top: auto;
   }
 }
 
@@ -364,6 +368,8 @@
     height: 300px;
     grid-column: 1;
     grid-row: auto;
+    position: static;
+    top: auto;
   }
 
   .left-content-panel {
