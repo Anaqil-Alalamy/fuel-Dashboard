@@ -277,6 +277,8 @@
 @media (max-width: 768px) {
   .dashboard-content {
     padding: 20px;
+    grid-template-columns: 1fr;
+    gap: 20px;
   }
 
   .header-content {
@@ -312,19 +314,18 @@
     grid-template-columns: 1fr;
   }
 
-  .map-and-tables-wrapper {
-    grid-template-columns: 1fr;
-    gap: 20px;
-  }
-
   .site-map-container {
     height: 350px;
+    grid-column: 1;
+    grid-row: auto;
   }
 }
 
 @media (max-width: 480px) {
   .dashboard-content {
     padding: 15px;
+    grid-template-columns: 1fr;
+    gap: 15px;
   }
 
   .header-content {
@@ -359,9 +360,11 @@
 
   .site-map-container {
     height: 300px;
+    grid-column: 1;
+    grid-row: auto;
   }
 
-  .map-and-tables-wrapper {
+  .left-content-panel {
     gap: 15px;
   }
 }
