@@ -376,6 +376,18 @@
     gap: 15px;
   }
 
+  .left-content-panel {
+    gap: 15px;
+    height: auto;
+    overflow-y: visible;
+    overflow-x: hidden;
+    padding-right: 0;
+  }
+
+  .left-content-panel::-webkit-scrollbar {
+    display: none;
+  }
+
   .header-content {
     padding: 0 15px;
   }
@@ -412,9 +424,5 @@
     grid-row: auto;
     position: static;
     top: auto;
-  }
-
-  .left-content-panel {
-    gap: 15px;
   }
 }
