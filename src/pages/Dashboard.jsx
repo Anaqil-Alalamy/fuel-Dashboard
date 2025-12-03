@@ -61,16 +61,12 @@ export default function Dashboard({ onLogout }) {
       </header>
 
       <div className="dashboard-content">
-        <div className="summary-cards-section">
-          <SummaryCard title="Total Sites" count={allSites.length} variant="total" />
-          <SummaryCard title="Today" count={mockData.today.length} variant="today" />
-          <SummaryCard title="Tomorrow" count={mockData.tomorrow.length} variant="tomorrow" />
-          <SummaryCard title="Overdue" count={mockData.due.length} variant="overdue" />
-        </div>
-
-        <div className="map-and-tables-wrapper">
-          <div className="site-map-container">
-            <SiteMap sites={allSites} />
+        <div className="left-content-panel">
+          <div className="summary-cards-section">
+            <SummaryCard title="Total Sites" count={allSites.length} variant="total" />
+            <SummaryCard title="Today" count={mockData.today.length} variant="today" />
+            <SummaryCard title="Tomorrow" count={mockData.tomorrow.length} variant="tomorrow" />
+            <SummaryCard title="Overdue" count={mockData.due.length} variant="overdue" />
           </div>
 
           <div className="tables-container">
@@ -103,6 +99,10 @@ export default function Dashboard({ onLogout }) {
               statusColor="red"
             />
           </div>
+        </div>
+
+        <div className="site-map-container">
+          <SiteMap sites={allSites} />
         </div>
       </div>
     </div>
