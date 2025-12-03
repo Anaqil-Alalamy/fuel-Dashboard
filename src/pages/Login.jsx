@@ -1,25 +1,32 @@
 import { useState } from 'react'
 import '../styles/login.css'
 
-export default function Login() {
+export default function Login({ onLoginSuccess }) {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [rememberMe, setRememberMe] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState('')
 
   const handleSubmit = async (e) => {
     e.preventDefault()
+    setError('')
     setIsLoading(true)
-    
+
     try {
-      // TODO: Replace with actual API call
+      if (!email || !password) {
+        throw new Error('Please enter both email and password')
+      }
+
       console.log('Login attempt:', { email, password, rememberMe })
-      // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1500))
-      alert('Login successful!')
-    } catch (error) {
-      console.error('Login error:', error)
-      alert('Login failed. Please try again.')
+
+      if (onLoginSuccess) {
+        onLoginSuccess()
+      }
+    } catch (err) {
+      console.error('Login error:', err)
+      setError(err.message || 'Login failed. Please try again.')
     } finally {
       setIsLoading(false)
     }
@@ -40,6 +47,8 @@ export default function Login() {
           <h1 className="login-title">Welcome Back</h1>
           <p className="login-subtitle">Sign in to your account</p>
         </div>
+
+        {error && <div className="error-message">{error}</div>}
 
         <form onSubmit={handleSubmit} className="login-form">
           <div className="form-group">
