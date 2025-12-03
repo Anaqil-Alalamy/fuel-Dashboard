@@ -517,5 +517,6 @@
     top: auto;
     border: 2px solid var(--accent-yellow);
     box-shadow: inset 0 0 0 4px var(--primary-blue);
+    margin-bottom: 12px;
   }
 }
