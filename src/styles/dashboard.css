@@ -441,15 +441,35 @@
   }
 
   .header-content {
-    padding: 0 15px;
+    padding: 10px 15px;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .header-logo-section {
+    width: 50px;
+    height: 50px;
+  }
+
+  .header-logo {
+    height: 40px;
+  }
+
+  .header-center {
+    text-align: center;
   }
 
   .dashboard-title {
-    font-size: 20px;
+    font-size: 18px;
   }
 
   .dashboard-subtitle {
-    font-size: 12px;
+    font-size: 11px;
+  }
+
+  .logout-button {
+    padding: 8px 16px;
+    font-size: 11px;
   }
 
   .section-tab {
