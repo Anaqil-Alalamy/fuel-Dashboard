@@ -361,7 +361,11 @@
   }
 
   .summary-cards-section {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .tables-container {
+    grid-template-columns: 1fr 1fr;
   }
 
   .site-map-container {
