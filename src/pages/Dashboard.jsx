@@ -1,27 +1,34 @@
 import { useState } from 'react'
-import FuelingCard from '../components/FuelingCard'
-import FuelingTable from '../components/FuelingTable'
+import SummaryCard from '../components/SummaryCard'
+import ExpandableTable from '../components/ExpandableTable'
+import SiteMap from '../components/SiteMap'
 import '../styles/dashboard.css'
+
+const today = new Date()
+const tomorrow = new Date(today.getTime() + 24 * 60 * 60 * 1000)
+const in3Days = new Date(today.getTime() + 3 * 24 * 60 * 60 * 1000)
 
 const mockData = {
   today: [
-    { id: 1, siteName: 'GSM Downtown', fuelType: 'Diesel', quantity: '500L', status: 'pending' },
-    { id: 2, siteName: 'GSM Airport Hub', fuelType: 'Petrol', quantity: '300L', status: 'in-progress' },
+    { id: 1, siteName: 'GSM Downtown', fuelType: 'Diesel', quantity: '500L', status: 'pending', date: today.toISOString().split('T')[0], lat: 40.7128, lng: -74.0060 },
+    { id: 2, siteName: 'GSM Airport Hub', fuelType: 'Petrol', quantity: '300L', status: 'in-progress', date: today.toISOString().split('T')[0], lat: 40.7614, lng: -73.9776 },
   ],
   tomorrow: [
-    { id: 3, siteName: 'GSM North Terminal', fuelType: 'Diesel', quantity: '450L', status: 'scheduled' },
-    { id: 4, siteName: 'GSM East Port', fuelType: 'Petrol', quantity: '350L', status: 'scheduled' },
+    { id: 3, siteName: 'GSM North Terminal', fuelType: 'Diesel', quantity: '450L', status: 'scheduled', date: tomorrow.toISOString().split('T')[0], lat: 40.7282, lng: -73.7949 },
+    { id: 4, siteName: 'GSM East Port', fuelType: 'Petrol', quantity: '350L', status: 'scheduled', date: tomorrow.toISOString().split('T')[0], lat: 40.6501, lng: -73.9496 },
   ],
   comingIn3Days: [
-    { id: 5, siteName: 'GSM West Branch', fuelType: 'Diesel', quantity: '600L', status: 'scheduled' },
-    { id: 6, siteName: 'GSM Central Depot', fuelType: 'Petrol', quantity: '400L', status: 'scheduled' },
-    { id: 7, siteName: 'GSM South Station', fuelType: 'Diesel', quantity: '550L', status: 'scheduled' },
+    { id: 5, siteName: 'GSM West Branch', fuelType: 'Diesel', quantity: '600L', status: 'scheduled', date: in3Days.toISOString().split('T')[0], lat: 40.7245, lng: -74.0427 },
+    { id: 6, siteName: 'GSM Central Depot', fuelType: 'Petrol', quantity: '400L', status: 'scheduled', date: in3Days.toISOString().split('T')[0], lat: 40.7489, lng: -73.9680 },
+    { id: 7, siteName: 'GSM South Station', fuelType: 'Diesel', quantity: '550L', status: 'scheduled', date: in3Days.toISOString().split('T')[0], lat: 40.6850, lng: -73.9817 },
   ],
   due: [
-    { id: 8, siteName: 'GSM Harbor Facility', fuelType: 'Diesel', quantity: '700L', status: 'overdue', daysOverdue: 2 },
-    { id: 9, siteName: 'GSM Mountain Site', fuelType: 'Petrol', quantity: '250L', status: 'overdue', daysOverdue: 1 },
+    { id: 8, siteName: 'GSM Harbor Facility', fuelType: 'Diesel', quantity: '700L', status: 'overdue', daysOverdue: 2, date: new Date(today.getTime() - 2 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], lat: 40.6995, lng: -74.0091 },
+    { id: 9, siteName: 'GSM Mountain Site', fuelType: 'Petrol', quantity: '250L', status: 'overdue', daysOverdue: 1, date: new Date(today.getTime() - 1 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], lat: 40.6892, lng: -73.9760 },
   ],
 }
+
+const allSites = [...mockData.today, ...mockData.tomorrow, ...mockData.comingIn3Days, ...mockData.due]
 
 export default function Dashboard({ onLogout }) {
   const [viewMode, setViewMode] = useState('cards')
