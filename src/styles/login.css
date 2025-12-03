@@ -83,6 +83,17 @@ body {
   font-weight: 400;
 }
 
+.error-message {
+  background: rgba(231, 76, 60, 0.1);
+  border: 1px solid #E74C3C;
+  border-radius: 6px;
+  padding: 12px 14px;
+  font-size: 13px;
+  color: #E74C3C;
+  margin-bottom: 20px;
+  font-weight: 500;
+}
+
 .login-form {
   width: 100%;
   margin-bottom: 20px;

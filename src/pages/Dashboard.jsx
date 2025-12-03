@@ -23,12 +23,14 @@ const mockData = {
   ],
 }
 
-export default function Dashboard() {
+export default function Dashboard({ onLogout }) {
   const [viewMode, setViewMode] = useState('cards')
   const [activeSection, setActiveSection] = useState('today')
 
   const handleLogout = () => {
-    window.location.href = '/'
+    if (onLogout) {
+      onLogout()
+    }
   }
 
   const getSectionData = () => {
