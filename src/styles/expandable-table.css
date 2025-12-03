@@ -9,10 +9,10 @@
 
 .expandable-table {
   background: var(--white);
-  border-radius: 8px;
+  border-radius: 6px;
   overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  margin-bottom: 16px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+  margin-bottom: 0;
   border-top: 4px solid #ccc;
   transition: all 0.3s ease;
 }
@@ -35,7 +35,7 @@
 
 .table-header {
   width: 100%;
-  padding: 16px 20px;
+  padding: 11px 14px;
   background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
   border: none;
   display: flex;
@@ -43,7 +43,7 @@
   align-items: center;
   cursor: pointer;
   transition: background-color 0.3s ease;
-  font-size: 14px;
+  font-size: 12px;
   font-weight: 600;
 }
 
@@ -62,15 +62,15 @@
 .table-title {
   color: var(--text-dark);
   font-weight: 600;
-  font-size: 15px;
+  font-size: 13px;
 }
 
 .site-count {
   background: rgba(0, 153, 216, 0.1);
   color: var(--primary-blue);
-  padding: 4px 12px;
-  border-radius: 20px;
-  font-size: 12px;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 10px;
   font-weight: 600;
   white-space: nowrap;
 }
