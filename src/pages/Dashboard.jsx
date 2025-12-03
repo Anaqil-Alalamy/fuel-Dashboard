@@ -49,8 +49,16 @@ export default function Dashboard({ onLogout }) {
   return (
     <div className="dashboard-container">
       <header className="dashboard-header">
+        <div className="header-accent-line"></div>
         <div className="header-content">
-          <div className="header-left">
+          <div className="header-logo-section">
+            <img
+              src="https://cdn.builder.io/api/v1/image/assets%2Fabc8ab05f7d144f289a582747d3e5ca3%2F0b324f888a424c8eafb46b5a1298f5b4?format=webp&width=800"
+              alt="Company Logo"
+              className="header-logo"
+            />
+          </div>
+          <div className="header-center">
             <h1 className="dashboard-title">Fueling Dashboard</h1>
             <p className="dashboard-subtitle">GSM Sites Fueling Plan Management</p>
           </div>
