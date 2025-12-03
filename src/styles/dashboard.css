@@ -286,6 +286,14 @@
 
   .left-content-panel {
     grid-column: 1;
+    height: auto;
+    overflow-y: visible;
+    overflow-x: hidden;
+    padding-right: 0;
+  }
+
+  .left-content-panel::-webkit-scrollbar {
+    display: none;
   }
 
   .site-map-container {
