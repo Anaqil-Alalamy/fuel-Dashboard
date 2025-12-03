@@ -1,3 +1,12 @@
+:root {
+  --primary-blue: #0099D8;
+  --dark-blue: #003366;
+  --white: #FFFFFF;
+  --border-gray: #E0E4E8;
+  --text-dark: #1A1A1A;
+  --text-light: #666666;
+}
+
 .summary-card {
   background: var(--white);
   border-radius: 12px;
