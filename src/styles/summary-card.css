@@ -1,0 +1,99 @@
+.summary-card {
+  background: var(--white);
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  min-height: 140px;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.summary-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+}
+
+.card-content {
+  flex: 1;
+  z-index: 1;
+}
+
+.card-title {
+  font-size: 14px;
+  font-weight: 500;
+  color: #666666;
+  margin-bottom: 8px;
+  letter-spacing: 0.3px;
+}
+
+.card-count {
+  font-size: 48px;
+  font-weight: 700;
+  margin: 0;
+  background: linear-gradient(135deg, var(--primary-blue) 0%, var(--dark-blue) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.card-icon {
+  font-size: 60px;
+  opacity: 0.2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  right: -10px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.summary-card-total {
+  border-left: 4px solid var(--primary-blue);
+}
+
+.summary-card-today {
+  border-left: 4px solid #0099D8;
+}
+
+.summary-card-tomorrow {
+  border-left: 4px solid #fbbf24;
+}
+
+.summary-card-overdue {
+  border-left: 4px solid #ef4444;
+}
+
+@media (max-width: 768px) {
+  .summary-card {
+    padding: 16px;
+    min-height: 120px;
+  }
+
+  .card-count {
+    font-size: 36px;
+  }
+
+  .card-icon {
+    font-size: 48px;
+  }
+}
+
+@media (max-width: 480px) {
+  .summary-card {
+    padding: 12px;
+    min-height: 100px;
+  }
+
+  .card-count {
+    font-size: 28px;
+  }
+
+  .card-icon {
+    font-size: 36px;
+  }
+}

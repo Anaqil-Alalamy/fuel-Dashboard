@@ -1,0 +1,98 @@
+.site-map {
+  background: var(--white);
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  height: 100%;
+}
+
+.map-title {
+  padding: 16px 20px;
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-dark);
+  border-bottom: 1px solid var(--border-gray);
+}
+
+.map-container {
+  height: calc(100% - 50px);
+  width: 100%;
+}
+
+.leaflet-container {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+}
+
+.popup-content {
+  padding: 8px;
+  min-width: 200px;
+}
+
+.popup-content h4 {
+  margin: 0 0 8px 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-dark);
+}
+
+.popup-content p {
+  margin: 4px 0;
+  font-size: 12px;
+  color: var(--text-light);
+}
+
+.popup-content strong {
+  color: var(--text-dark);
+  font-weight: 600;
+}
+
+.leaflet-popup-content-wrapper {
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.leaflet-popup-tip {
+  background: var(--white);
+}
+
+@media (max-width: 1024px) {
+  .site-map {
+    min-height: 400px;
+  }
+}
+
+@media (max-width: 768px) {
+  .site-map {
+    min-height: 350px;
+  }
+
+  .popup-content {
+    min-width: 180px;
+  }
+
+  .popup-content h4 {
+    font-size: 13px;
+  }
+
+  .popup-content p {
+    font-size: 11px;
+  }
+}
+
+@media (max-width: 480px) {
+  .site-map {
+    min-height: 300px;
+  }
+
+  .map-title {
+    padding: 12px 16px;
+    font-size: 14px;
+  }
+
+  .popup-content {
+    min-width: 150px;
+  }
+}
