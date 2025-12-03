@@ -31,8 +31,7 @@ const mockData = {
 const allSites = [...mockData.today, ...mockData.tomorrow, ...mockData.comingIn3Days, ...mockData.due]
 
 export default function Dashboard({ onLogout }) {
-  const [viewMode, setViewMode] = useState('cards')
-  const [activeSection, setActiveSection] = useState('today')
+  const [expandedTables, setExpandedTables] = useState({ today: true, tomorrow: false, coming3days: false, due: false })
 
   const handleLogout = () => {
     if (onLogout) {
@@ -40,32 +39,12 @@ export default function Dashboard({ onLogout }) {
     }
   }
 
-  const getSectionData = () => {
-    switch (activeSection) {
-      case 'today':
-        return mockData.today
-      case 'tomorrow':
-        return mockData.tomorrow
-      case 'coming3days':
-        return mockData.comingIn3Days
-      case 'due':
-        return mockData.due
-      default:
-        return []
-    }
+  const toggleTable = (section) => {
+    setExpandedTables(prev => ({
+      ...prev,
+      [section]: !prev[section]
+    }))
   }
-
-  const getSectionTitle = () => {
-    const titles = {
-      today: 'Today',
-      tomorrow: 'Tomorrow',
-      coming3days: 'Coming in 3 Days',
-      due: 'Due / Behind Schedule',
-    }
-    return titles[activeSection]
-  }
-
-  const sectionData = getSectionData()
 
   return (
     <div className="dashboard-container">
@@ -82,75 +61,48 @@ export default function Dashboard({ onLogout }) {
       </header>
 
       <div className="dashboard-content">
-        <nav className="section-navigation">
-          <button
-            className={`section-tab ${activeSection === 'today' ? 'active' : ''}`}
-            onClick={() => setActiveSection('today')}
-          >
-            <span className="tab-label">Today</span>
-            <span className="tab-count">{mockData.today.length}</span>
-          </button>
-          <button
-            className={`section-tab ${activeSection === 'tomorrow' ? 'active' : ''}`}
-            onClick={() => setActiveSection('tomorrow')}
-          >
-            <span className="tab-label">Tomorrow</span>
-            <span className="tab-count">{mockData.tomorrow.length}</span>
-          </button>
-          <button
-            className={`section-tab ${activeSection === 'coming3days' ? 'active' : ''}`}
-            onClick={() => setActiveSection('coming3days')}
-          >
-            <span className="tab-label">Coming in 3 Days</span>
-            <span className="tab-count">{mockData.comingIn3Days.length}</span>
-          </button>
-          <button
-            className={`section-tab ${activeSection === 'due' ? 'active' : ''}`}
-            onClick={() => setActiveSection('due')}
-          >
-            <span className="tab-label">Due / Behind</span>
-            <span className="tab-count">{mockData.due.length}</span>
-          </button>
-        </nav>
-
-        <div className="section-header">
-          <h2 className="section-title">{getSectionTitle()}</h2>
-          <div className="view-toggles">
-            <button
-              className={`view-toggle ${viewMode === 'cards' ? 'active' : ''}`}
-              onClick={() => setViewMode('cards')}
-              title="Card View"
-            >
-              <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
-                <path d="M3 4a2 2 0 012-2h10a2 2 0 012 2v10a2 2 0 01-2 2H5a2 2 0 01-2-2V4z" />
-              </svg>
-            </button>
-            <button
-              className={`view-toggle ${viewMode === 'table' ? 'active' : ''}`}
-              onClick={() => setViewMode('table')}
-              title="Table View"
-            >
-              <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
-                <path d="M2 4a2 2 0 012-2h12a2 2 0 012 2v12a2 2 0 01-2 2H4a2 2 0 01-2-2V4zm2 2v2h2V6H4zm0 4v2h2v-2H4zm0 4v2h2v-2H4zm4-8v2h2V6H8zm0 4v2h2v-2H8zm0 4v2h2v-2H8zm4-8v2h2V6h-2zm0 4v2h2v-2h-2zm0 4v2h2v-2h-2z" />
-              </svg>
-            </button>
-          </div>
+        <div className="summary-cards-section">
+          <SummaryCard title="Total Sites" count={allSites.length} variant="total" />
+          <SummaryCard title="Today" count={mockData.today.length} variant="today" />
+          <SummaryCard title="Tomorrow" count={mockData.tomorrow.length} variant="tomorrow" />
+          <SummaryCard title="Overdue" count={mockData.due.length} variant="overdue" />
         </div>
 
-        <div className="section-content">
-          {sectionData.length === 0 ? (
-            <div className="empty-state">
-              <p>No fueling plans scheduled for this period.</p>
-            </div>
-          ) : viewMode === 'cards' ? (
-            <div className="cards-grid">
-              {sectionData.map((item) => (
-                <FuelingCard key={item.id} data={item} section={activeSection} />
-              ))}
-            </div>
-          ) : (
-            <FuelingTable data={sectionData} section={activeSection} />
-          )}
+        <div className="map-and-tables-wrapper">
+          <div className="site-map-container">
+            <SiteMap sites={allSites} />
+          </div>
+
+          <div className="tables-container">
+            <ExpandableTable
+              title="Today"
+              data={mockData.today}
+              isExpanded={expandedTables.today}
+              onToggle={() => toggleTable('today')}
+              statusColor="blue"
+            />
+            <ExpandableTable
+              title="Tomorrow"
+              data={mockData.tomorrow}
+              isExpanded={expandedTables.tomorrow}
+              onToggle={() => toggleTable('tomorrow')}
+              statusColor="yellow"
+            />
+            <ExpandableTable
+              title="Coming in 3 Days"
+              data={mockData.comingIn3Days}
+              isExpanded={expandedTables.coming3days}
+              onToggle={() => toggleTable('coming3days')}
+              statusColor="green"
+            />
+            <ExpandableTable
+              title="Overdue"
+              data={mockData.due}
+              isExpanded={expandedTables.due}
+              onToggle={() => toggleTable('due')}
+              statusColor="red"
+            />
+          </div>
         </div>
       </div>
     </div>
