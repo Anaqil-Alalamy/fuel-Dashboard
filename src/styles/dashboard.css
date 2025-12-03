@@ -307,6 +307,10 @@
   .summary-cards-section {
     grid-template-columns: repeat(2, 1fr);
   }
+
+  .tables-container {
+    grid-template-columns: 1fr 1fr;
+  }
 }
 
 @media (max-width: 768px) {
