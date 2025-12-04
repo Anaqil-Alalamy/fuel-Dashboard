@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react'
 import FuelingCard from '../components/FuelingCard'
 import FuelingTable from '../components/FuelingTable'
-import DashboardSidebar from '../components/DashboardSidebar'
 import MapPanel from '../components/MapPanel'
 import { fetchCsvData } from '../utils/csvParser'
 import '../styles/dashboard.css'
