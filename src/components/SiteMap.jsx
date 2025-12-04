@@ -6,14 +6,20 @@ import '../styles/site-map.css'
 export default function SiteMap({ sites }) {
   const getStatusColor = (status) => {
     switch (status) {
+      case 'today':
+        return '#facc15'
       case 'pending':
         return '#facc15'
       case 'in-progress':
         return '#0099D8'
+      case 'comingSoon':
+        return '#22c55e'
       case 'scheduled':
         return '#22c55e'
       case 'due':
         return '#ef4444'
+      case 'unscheduled':
+        return '#9ca3af'
       default:
         return '#38bdf8'
     }
@@ -24,13 +30,17 @@ export default function SiteMap({ sites }) {
       today: 'Today',
       comingSoon: 'Coming in 3 Days',
       due: 'Due',
+      unscheduled: 'Unscheduled',
     }
     return labels[status] || status
   }
 
   const initialCenter = useMemo(() => {
     if (sites.length > 0) {
-      return [sites[0].lat, sites[0].lng]
+      const siteWithCoords = sites.find(s => s.lat && s.lng)
+      if (siteWithCoords) {
+        return [siteWithCoords.lat, siteWithCoords.lng]
+      }
     }
     return [24.7136, 46.6753]
   }, [sites])
@@ -41,12 +51,13 @@ export default function SiteMap({ sites }) {
     useEffect(() => {
       if (!map) return
 
-      if (points.length === 0) {
+      const validPoints = points.filter(p => p.lat && p.lng)
+      if (validPoints.length === 0) {
         map.setView(fallbackCenter, 5)
         return
       }
 
-      const bounds = points.map((point) => [point.lat, point.lng])
+      const bounds = validPoints.map((point) => [point.lat, point.lng])
       map.fitBounds(bounds, { padding: [40, 40] })
     }, [map, points, fallbackCenter])
 
@@ -87,7 +98,7 @@ export default function SiteMap({ sites }) {
 
           <LayersControl.Overlay name="Sites" checked>
             <LayerGroup>
-              {sites.map((site) => (
+              {sites.filter(site => site.lat && site.lng).map((site) => (
                 <CircleMarker
                   key={site.id}
                   center={[site.lat, site.lng]}
