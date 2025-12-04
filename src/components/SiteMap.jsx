@@ -81,8 +81,7 @@ export default function SiteMap({ sites }) {
                       <h4>{site.siteName}</h4>
                       <p><strong>ID:</strong> {site.id}</p>
                       <p><strong>Status:</strong> {getStatusLabel(site.status)}</p>
-                      <p><strong>Fuel Type:</strong> {site.fuelType}</p>
-                      <p><strong>Quantity:</strong> {site.quantity}</p>
+                      <p><strong>Date:</strong> {site.date}</p>
                     </div>
                   </Popup>
                 </CircleMarker>
