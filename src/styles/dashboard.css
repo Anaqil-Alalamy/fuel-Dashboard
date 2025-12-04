@@ -118,13 +118,14 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(255, 255, 255, 0.95);
+  background: rgba(255, 255, 255, 0.98);
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   z-index: 200;
   gap: 20px;
+  backdrop-filter: blur(1px);
 }
 
 .loading-spinner {
@@ -134,6 +135,13 @@
   border-top-color: var(--primary-blue);
   border-radius: 50%;
   animation: spin 1s linear infinite;
+}
+
+.loading-overlay p {
+  font-size: 16px;
+  color: var(--text-dark);
+  font-weight: 500;
+  letter-spacing: 0.3px;
 }
 
 @keyframes spin {
