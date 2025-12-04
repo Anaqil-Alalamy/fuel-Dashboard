@@ -4,7 +4,8 @@ import SiteMap from '../components/SiteMap'
 import DonutChart from '../components/DonutChart'
 import '../styles/dashboard.css'
 
-const CSV_URL = 'https://script.google.com/macros/s/AKfycbzbST2rOz9kKLraBIdGf-xuewLIyc1RlgCmUsbEVKTowOHJhhljHo3lB8vnPTyDpXLKMA/exec'
+const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRDnTkwpbgsnY_i60u3ZleNs1DL3vMdG3fYHMrr5rwVDqMb3GpgKH40Y-7WQsEzEAi-wDHwLaimN8NC/pub?gid=1&output=csv'
+const CORS_PROXY = 'https://api.allorigins.win/raw?url='
 
 const parseCSV = (csvText) => {
   const lines = csvText.trim().split('\n')
