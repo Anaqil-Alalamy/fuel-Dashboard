@@ -8,23 +8,25 @@ const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRDnTkwpbgsnY_i
 
 const parseCSV = (csvText) => {
   const lines = csvText.trim().split('\n')
-  const headers = lines[0].split(',').map(h => h.trim())
   const sites = []
 
   for (let i = 1; i < lines.length; i++) {
-    const values = lines[i].split(',').map(v => v.trim())
+    const values = lines[i].split(',').map(v => v.trim().replace(/^"|"$/g, ''))
     if (values.length < 14) continue
 
-    const site = {
-      id: i,
-      siteName: values[0],
-      lat: parseFloat(values[5]),
-      lng: parseFloat(values[6]),
-      date: values[13],
-    }
+    const siteName = values[0]
+    const lat = parseFloat(values[5])
+    const lng = parseFloat(values[6])
+    const date = values[13]
 
-    if (site.siteName && !isNaN(site.lat) && !isNaN(site.lng) && site.date) {
-      sites.push(site)
+    if (siteName && !isNaN(lat) && !isNaN(lng) && date) {
+      sites.push({
+        id: i,
+        siteName,
+        lat,
+        lng,
+        date,
+      })
     }
   }
 
