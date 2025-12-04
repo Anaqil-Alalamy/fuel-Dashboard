@@ -41,15 +41,17 @@ const parseCSV = (csvText) => {
     const siteName = values[0]
     if (!siteName) continue
 
-    const lat = values[5] ? parseFloat(values[5]) : null
-    const lng = values[6] ? parseFloat(values[6]) : null
+    const latValue = values[5] ? parseFloat(values[5]) : null
+    const lngValue = values[6] ? parseFloat(values[6]) : null
+    const lat = isNaN(latValue) || latValue === 0 ? null : latValue
+    const lng = isNaN(lngValue) || lngValue === 0 ? null : lngValue
     const date = values[13] || null
 
     sites.push({
       id: i,
       siteName,
-      lat: isNaN(lat) ? null : lat,
-      lng: isNaN(lng) ? null : lng,
+      lat,
+      lng,
       date,
     })
   }
@@ -59,6 +61,19 @@ const parseCSV = (csvText) => {
 const parseDate = (dateString) => {
   if (!dateString) return null
 
+  // Try to parse DD/MM/YYYY format
+  const ddmmyyyyMatch = dateString.match(/^(\d{2})\/(\d{2})\/(\d{4})$/)
+  if (ddmmyyyyMatch) {
+    const day = parseInt(ddmmyyyyMatch[1], 10)
+    const month = parseInt(ddmmyyyyMatch[2], 10) - 1 // JavaScript months are 0-indexed
+    const year = parseInt(ddmmyyyyMatch[3], 10)
+
+    const date = new Date(year, month, day)
+    date.setHours(0, 0, 0, 0)
+    return date
+  }
+
+  // Fallback for other date formats
   const date = new Date(dateString)
   if (isNaN(date.getTime())) {
     console.warn('Invalid date:', dateString)
@@ -171,12 +186,14 @@ const fetchSitesData = async () => {
 }
 
 const formatDate = (dateString) => {
-  const date = new Date(dateString)
-  return date.toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-  })
+  const date = parseDate(dateString)
+  if (!date) return dateString
+
+  const day = String(date.getDate()).padStart(2, '0')
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const year = date.getFullYear()
+
+  return `${day}/${month}/${year}`
 }
 
 const getCurrentDateTime = () => {
