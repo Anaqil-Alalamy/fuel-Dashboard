@@ -200,6 +200,24 @@
   padding-right: 8px;
 }
 
+.left-column::-webkit-scrollbar {
+  width: 8px;
+}
+
+.left-column::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 4px;
+}
+
+.left-column::-webkit-scrollbar-thumb {
+  background: var(--navy-blue-light);
+  border-radius: 4px;
+}
+
+.left-column::-webkit-scrollbar-thumb:hover {
+  background: var(--navy-blue);
+}
+
 .right-column {
   display: flex;
   flex-direction: column;
