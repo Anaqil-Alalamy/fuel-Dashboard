@@ -63,8 +63,8 @@ body {
 }
 
 .logo-image {
-  height: 150px;
-  width: auto;
+  height: 180px;
+  width: 400px;
   object-fit: contain;
 }
 
