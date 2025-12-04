@@ -125,35 +125,10 @@ const fetchSitesData = async () => {
   try {
     console.log('Attempting to fetch from CSV URL')
 
-    const controller = new AbortController()
-    const timeoutId = setTimeout(() => controller.abort(), 8000)
+    const response = await fetch(CSV_URL, {
+      method: 'GET',
+    })
 
-    let response
-    try {
-      response = await fetch(CSV_URL, {
-        method: 'GET',
-        signal: controller.signal,
-      })
-    } catch (directFetchError) {
-      clearTimeout(timeoutId)
-      console.log('Direct fetch failed, trying CORS proxy...', directFetchError.message)
-
-      const fallbackController = new AbortController()
-      const fallbackTimeoutId = setTimeout(() => fallbackController.abort(), 8000)
-
-      try {
-        response = await fetch(CORS_PROXY + encodeURIComponent(CSV_URL), {
-          method: 'GET',
-          signal: fallbackController.signal,
-        })
-        clearTimeout(fallbackTimeoutId)
-      } catch (fallbackError) {
-        clearTimeout(fallbackTimeoutId)
-        throw fallbackError
-      }
-    }
-
-    clearTimeout(timeoutId)
     console.log('Response status:', response.status)
 
     if (!response.ok) {
@@ -180,7 +155,7 @@ const fetchSitesData = async () => {
 
     return categorized
   } catch (error) {
-    console.warn('Error fetching sites data, using fallback mock data:', error)
+    console.warn('Error fetching sites data, using fallback mock data:', error.message)
     return getMockFallbackData()
   }
 }
