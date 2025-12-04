@@ -1,31 +1,36 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import FuelingCard from '../components/FuelingCard'
 import FuelingTable from '../components/FuelingTable'
+import MapComponent from '../components/MapComponent'
+import { fetchFuelingData, organizeFuelingDataByDate, getTotalSitesCount, getSectionCount } from '../utils/dataUtils'
 import '../styles/dashboard.css'
 
-const mockData = {
-  today: [
-    { id: 1, siteName: 'GSM Downtown', fuelType: 'Diesel', quantity: '500L', status: 'pending' },
-    { id: 2, siteName: 'GSM Airport Hub', fuelType: 'Petrol', quantity: '300L', status: 'in-progress' },
-  ],
-  tomorrow: [
-    { id: 3, siteName: 'GSM North Terminal', fuelType: 'Diesel', quantity: '450L', status: 'scheduled' },
-    { id: 4, siteName: 'GSM East Port', fuelType: 'Petrol', quantity: '350L', status: 'scheduled' },
-  ],
-  comingIn3Days: [
-    { id: 5, siteName: 'GSM West Branch', fuelType: 'Diesel', quantity: '600L', status: 'scheduled' },
-    { id: 6, siteName: 'GSM Central Depot', fuelType: 'Petrol', quantity: '400L', status: 'scheduled' },
-    { id: 7, siteName: 'GSM South Station', fuelType: 'Diesel', quantity: '550L', status: 'scheduled' },
-  ],
-  due: [
-    { id: 8, siteName: 'GSM Harbor Facility', fuelType: 'Diesel', quantity: '700L', status: 'overdue', daysOverdue: 2 },
-    { id: 9, siteName: 'GSM Mountain Site', fuelType: 'Petrol', quantity: '250L', status: 'overdue', daysOverdue: 1 },
-  ],
-}
+const SECTIONS = [
+  { id: 'today', label: 'Today', icon: '📅' },
+  { id: 'coming1day', label: 'Coming in 1 Day', icon: '⏭️' },
+  { id: 'coming2days', label: 'Coming in 2 Days', icon: '⏩' },
+  { id: 'coming3days', label: 'Coming in 3 Days', icon: '⏩⏩' },
+  { id: 'due', label: 'Due / Behind Schedule', icon: '⚠️' },
+]
 
 export default function Dashboard({ onLogout }) {
   const [viewMode, setViewMode] = useState('cards')
   const [activeSection, setActiveSection] = useState('today')
+  const [allData, setAllData] = useState([])
+  const [organizedData, setOrganizedData] = useState(null)
+  const [isLoading, setIsLoading] = useState(true)
+  const [showMap, setShowMap] = useState(true)
+
+  useEffect(() => {
+    const loadData = async () => {
+      setIsLoading(true)
+      const data = await fetchFuelingData()
+      setAllData(data)
+      setOrganizedData(organizeFuelingDataByDate(data))
+      setIsLoading(false)
+    }
+    loadData()
+  }, [])
 
   const handleLogout = () => {
     if (onLogout) {
@@ -34,31 +39,38 @@ export default function Dashboard({ onLogout }) {
   }
 
   const getSectionData = () => {
-    switch (activeSection) {
-      case 'today':
-        return mockData.today
-      case 'tomorrow':
-        return mockData.tomorrow
-      case 'coming3days':
-        return mockData.comingIn3Days
-      case 'due':
-        return mockData.due
-      default:
-        return []
-    }
+    if (!organizedData) return []
+    return organizedData[activeSection] || []
   }
 
   const getSectionTitle = () => {
-    const titles = {
-      today: 'Today',
-      tomorrow: 'Tomorrow',
-      coming3days: 'Coming in 3 Days',
-      due: 'Due / Behind Schedule',
-    }
-    return titles[activeSection]
+    const section = SECTIONS.find((s) => s.id === activeSection)
+    return section ? section.label : 'Dashboard'
   }
 
   const sectionData = getSectionData()
+  const totalSites = getTotalSitesCount(allData)
+
+  if (isLoading) {
+    return (
+      <div className="dashboard-container">
+        <header className="dashboard-header">
+          <div className="header-content">
+            <div className="header-left">
+              <h1 className="dashboard-title">Fueling Dashboard</h1>
+              <p className="dashboard-subtitle">GSM Sites Fueling Plan Management</p>
+            </div>
+            <button className="logout-button" onClick={handleLogout}>
+              Logout
+            </button>
+          </div>
+        </header>
+        <div className="dashboard-content">
+          <div className="loading-spinner">Loading data...</div>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="dashboard-container">
@@ -75,75 +87,79 @@ export default function Dashboard({ onLogout }) {
       </header>
 
       <div className="dashboard-content">
-        <nav className="section-navigation">
-          <button
-            className={`section-tab ${activeSection === 'today' ? 'active' : ''}`}
-            onClick={() => setActiveSection('today')}
-          >
-            <span className="tab-label">Today</span>
-            <span className="tab-count">{mockData.today.length}</span>
-          </button>
-          <button
-            className={`section-tab ${activeSection === 'tomorrow' ? 'active' : ''}`}
-            onClick={() => setActiveSection('tomorrow')}
-          >
-            <span className="tab-label">Tomorrow</span>
-            <span className="tab-count">{mockData.tomorrow.length}</span>
-          </button>
-          <button
-            className={`section-tab ${activeSection === 'coming3days' ? 'active' : ''}`}
-            onClick={() => setActiveSection('coming3days')}
-          >
-            <span className="tab-label">Coming in 3 Days</span>
-            <span className="tab-count">{mockData.comingIn3Days.length}</span>
-          </button>
-          <button
-            className={`section-tab ${activeSection === 'due' ? 'active' : ''}`}
-            onClick={() => setActiveSection('due')}
-          >
-            <span className="tab-label">Due / Behind</span>
-            <span className="tab-count">{mockData.due.length}</span>
-          </button>
-        </nav>
-
-        <div className="section-header">
-          <h2 className="section-title">{getSectionTitle()}</h2>
-          <div className="view-toggles">
-            <button
-              className={`view-toggle ${viewMode === 'cards' ? 'active' : ''}`}
-              onClick={() => setViewMode('cards')}
-              title="Card View"
-            >
-              <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
-                <path d="M3 4a2 2 0 012-2h10a2 2 0 012 2v10a2 2 0 01-2 2H5a2 2 0 01-2-2V4z" />
-              </svg>
-            </button>
-            <button
-              className={`view-toggle ${viewMode === 'table' ? 'active' : ''}`}
-              onClick={() => setViewMode('table')}
-              title="Table View"
-            >
-              <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
-                <path d="M2 4a2 2 0 012-2h12a2 2 0 012 2v12a2 2 0 01-2 2H4a2 2 0 01-2-2V4zm2 2v2h2V6H4zm0 4v2h2v-2H4zm0 4v2h2v-2H4zm4-8v2h2V6H8zm0 4v2h2v-2H8zm0 4v2h2v-2H8zm4-8v2h2V6h-2zm0 4v2h2v-2h-2zm0 4v2h2v-2h-2z" />
-              </svg>
+        <div className="dashboard-main">
+          <div className="map-section">
+            {showMap && <MapComponent sites={allData} />}
+            <button className="toggle-map-button" onClick={() => setShowMap(!showMap)}>
+              {showMap ? 'Hide Map' : 'Show Map'}
             </button>
           </div>
-        </div>
 
-        <div className="section-content">
-          {sectionData.length === 0 ? (
-            <div className="empty-state">
-              <p>No fueling plans scheduled for this period.</p>
+          <div className="stats-bar">
+            <div className="stat-card">
+              <span className="stat-label">Total Sites</span>
+              <span className="stat-value">{totalSites}</span>
             </div>
-          ) : viewMode === 'cards' ? (
-            <div className="cards-grid">
-              {sectionData.map((item) => (
-                <FuelingCard key={item.id} data={item} section={activeSection} />
-              ))}
+            {SECTIONS.map((section) => (
+              <div key={section.id} className="stat-card">
+                <span className="stat-label">{section.label}</span>
+                <span className="stat-value">{getSectionCount(section.id, organizedData)}</span>
+              </div>
+            ))}
+          </div>
+
+          <nav className="section-navigation">
+            {SECTIONS.map((section) => (
+              <button
+                key={section.id}
+                className={`section-tab ${activeSection === section.id ? 'active' : ''}`}
+                onClick={() => setActiveSection(section.id)}
+              >
+                <span className="tab-label">{section.label}</span>
+                <span className="tab-count">{getSectionCount(section.id, organizedData)}</span>
+              </button>
+            ))}
+          </nav>
+
+          <div className="section-header">
+            <h2 className="section-title">{getSectionTitle()}</h2>
+            <div className="view-toggles">
+              <button
+                className={`view-toggle ${viewMode === 'cards' ? 'active' : ''}`}
+                onClick={() => setViewMode('cards')}
+                title="Card View"
+              >
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+                  <path d="M3 4a2 2 0 012-2h10a2 2 0 012 2v10a2 2 0 01-2 2H5a2 2 0 01-2-2V4z" />
+                </svg>
+              </button>
+              <button
+                className={`view-toggle ${viewMode === 'table' ? 'active' : ''}`}
+                onClick={() => setViewMode('table')}
+                title="Table View"
+              >
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+                  <path d="M2 4a2 2 0 012-2h12a2 2 0 012 2v12a2 2 0 01-2 2H4a2 2 0 01-2-2V4zm2 2v2h2V6H4zm0 4v2h2v-2H4zm0 4v2h2v-2H4zm4-8v2h2V6H8zm0 4v2h2v-2H8zm0 4v2h2v-2H8zm4-8v2h2V6h-2zm0 4v2h2v-2h-2zm0 4v2h2v-2h-2z" />
+                </svg>
+              </button>
             </div>
-          ) : (
-            <FuelingTable data={sectionData} section={activeSection} />
-          )}
+          </div>
+
+          <div className="section-content">
+            {sectionData.length === 0 ? (
+              <div className="empty-state">
+                <p>No fueling plans scheduled for this period.</p>
+              </div>
+            ) : viewMode === 'cards' ? (
+              <div className="cards-grid">
+                {sectionData.map((item) => (
+                  <FuelingCard key={item.id} data={item} section={activeSection} />
+                ))}
+              </div>
+            ) : (
+              <FuelingTable data={sectionData} section={activeSection} />
+            )}
+          </div>
         </div>
       </div>
     </div>
