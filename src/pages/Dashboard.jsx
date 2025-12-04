@@ -59,6 +59,19 @@ const parseCSV = (csvText) => {
 const parseDate = (dateString) => {
   if (!dateString) return null
 
+  // Try to parse DD/MM/YYYY format
+  const ddmmyyyyMatch = dateString.match(/^(\d{2})\/(\d{2})\/(\d{4})$/)
+  if (ddmmyyyyMatch) {
+    const day = parseInt(ddmmyyyyMatch[1], 10)
+    const month = parseInt(ddmmyyyyMatch[2], 10) - 1 // JavaScript months are 0-indexed
+    const year = parseInt(ddmmyyyyMatch[3], 10)
+
+    const date = new Date(year, month, day)
+    date.setHours(0, 0, 0, 0)
+    return date
+  }
+
+  // Fallback for other date formats
   const date = new Date(dateString)
   if (isNaN(date.getTime())) {
     console.warn('Invalid date:', dateString)
