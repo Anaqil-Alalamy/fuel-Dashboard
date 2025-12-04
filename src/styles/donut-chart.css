@@ -1,0 +1,158 @@
+.donut-chart-card {
+  background: var(--white);
+  border-radius: 20px;
+  padding: 32px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  border: 1px solid var(--card-border);
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.donut-chart-header {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.donut-chart-header h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-strong);
+}
+
+.donut-chart-subtitle {
+  margin: 0;
+  font-size: 13px;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.donut-chart-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 32px;
+}
+
+.donut-svg {
+  width: 160px;
+  height: 160px;
+  flex-shrink: 0;
+}
+
+.donut-due {
+  transition: stroke-dashoffset 0.6s ease;
+}
+
+.donut-center-text {
+  font-size: 24px;
+  font-weight: 700;
+  fill: var(--navy-blue);
+}
+
+.donut-legend {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  flex: 1;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.legend-color {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.due-color {
+  background: #ef4444;
+}
+
+.on-time-color {
+  background: #22c55e;
+}
+
+.legend-item > div {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.legend-label {
+  margin: 0;
+  font-size: 12px;
+  color: var(--text-muted);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.legend-value {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-strong);
+}
+
+.donut-stats {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 16px;
+  padding-top: 20px;
+  border-top: 1px solid var(--card-border);
+  align-items: center;
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  text-align: center;
+}
+
+.stat-label {
+  font-size: 12px;
+  color: var(--text-muted);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.stat-number {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-strong);
+}
+
+.divider {
+  width: 1px;
+  height: 40px;
+  background: var(--card-border);
+}
+
+@media (max-width: 768px) {
+  .donut-chart-card {
+    padding: 24px;
+  }
+
+  .donut-chart-content {
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  .donut-stats {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .divider {
+    display: none;
+  }
+}
