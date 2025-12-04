@@ -110,6 +110,7 @@ const fetchSitesData = async () => {
       headers: {
         Accept: 'text/csv',
       },
+      mode: 'cors',
     })
 
     if (!response.ok) {
