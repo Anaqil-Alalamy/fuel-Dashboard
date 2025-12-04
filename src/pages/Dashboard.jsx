@@ -125,6 +125,16 @@ export default function Dashboard({ onLogout }) {
               ))}
             </nav>
 
+            <div className="search-section">
+              <input
+                type="text"
+                className="search-input"
+                placeholder="Search by site name..."
+                value={searchQuery}
+                onChange={handleSearchChange}
+              />
+            </div>
+
             <div className="section-header">
               <h2 className="section-title">{getSectionTitle()}</h2>
             </div>
