@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react'
-import SummaryCard from '../components/SummaryCard'
-import ExpandableTable from '../components/ExpandableTable'
+import StatusCard from '../components/StatusCard'
 import SiteMap from '../components/SiteMap'
 import '../styles/dashboard.css'
 
@@ -146,7 +145,6 @@ const fetchSitesData = async () => {
 }
 
 export default function Dashboard({ onLogout }) {
-  const [expandedTables, setExpandedTables] = useState({ today: true, tomorrow: false, coming3days: false, due: false })
   const [mockData, setMockData] = useState({
     today: [],
     tomorrow: [],
@@ -181,18 +179,12 @@ export default function Dashboard({ onLogout }) {
   }, [])
 
   const allSites = [...mockData.today, ...mockData.tomorrow, ...mockData.comingIn3Days, ...mockData.due]
+  const comingSoon = [...mockData.tomorrow, ...mockData.comingIn3Days]
 
   const handleLogout = () => {
     if (onLogout) {
       onLogout()
     }
-  }
-
-  const toggleTable = (section) => {
-    setExpandedTables(prev => ({
-      ...prev,
-      [section]: !prev[section]
-    }))
   }
 
   return (
@@ -229,48 +221,38 @@ export default function Dashboard({ onLogout }) {
             <p>⚠️ Error loading data: {error}</p>
           </div>
         )}
-        <div className="left-content-panel">
-          <div className="summary-cards-section">
-            <SummaryCard title="Total Sites" count={allSites.length} variant="total" />
-            <SummaryCard title="Today" count={mockData.today.length} variant="today" />
-            <SummaryCard title="Tomorrow" count={mockData.tomorrow.length} variant="tomorrow" />
-            <SummaryCard title="Overdue" count={mockData.due.length} variant="overdue" />
-          </div>
 
-          <div className="tables-container">
-            <ExpandableTable
-              title="Today"
-              data={mockData.today}
-              isExpanded={expandedTables.today}
-              onToggle={() => toggleTable('today')}
-              statusColor="blue"
-            />
-            <ExpandableTable
-              title="Tomorrow"
-              data={mockData.tomorrow}
-              isExpanded={expandedTables.tomorrow}
-              onToggle={() => toggleTable('tomorrow')}
-              statusColor="yellow"
-            />
-            <ExpandableTable
-              title="Coming in 3 Days"
-              data={mockData.comingIn3Days}
-              isExpanded={expandedTables.coming3days}
-              onToggle={() => toggleTable('coming3days')}
-              statusColor="green"
-            />
-            <ExpandableTable
-              title="Overdue"
-              data={mockData.due}
-              isExpanded={expandedTables.due}
-              onToggle={() => toggleTable('due')}
-              statusColor="red"
-            />
+        <div className="dashboard-hero">
+          <div>
+            <p className="eyebrow">Overview</p>
+            <h2>Daily Fuel Plan at a Glance</h2>
+            <p className="hero-subtitle">All site commitments in one clean, modern view.</p>
           </div>
+          <div className="hero-pill">Live Sync</div>
         </div>
 
-        <div className="site-map-container">
-          <SiteMap sites={allSites} />
+        <div className="dashboard-grid">
+          <div className="cards-column">
+            <StatusCard title="Total Sites" count={allSites.length} accentColor="#38bdf8" data={allSites} />
+            <StatusCard title="Today" count={mockData.today.length} accentColor="#facc15" data={mockData.today} />
+            <StatusCard title="Coming in 3 Days" count={comingSoon.length} accentColor="#22c55e" data={comingSoon} />
+            <StatusCard title="Due" count={mockData.due.length} accentColor="#ef4444" data={mockData.due} />
+          </div>
+
+          <div className="map-panel">
+            <div className="map-header">
+              <div>
+                <p className="eyebrow">Live Map</p>
+                <h3>Fueling Commitments</h3>
+              </div>
+              <div className="map-legend">
+                <span className="legend-dot" style={{ background: '#facc15' }}></span> Today
+                <span className="legend-dot" style={{ background: '#ef4444' }}></span> Due
+                <span className="legend-dot" style={{ background: '#22c55e' }}></span> Coming in 3 Days
+              </div>
+            </div>
+            <SiteMap sites={allSites} />
+          </div>
         </div>
       </div>
     </div>
