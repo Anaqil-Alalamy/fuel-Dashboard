@@ -18,6 +18,7 @@ export default function Dashboard({ onLogout }) {
   const [organizedData, setOrganizedData] = useState(null)
   const [isLoading, setIsLoading] = useState(true)
   const [showMap, setShowMap] = useState(true)
+  const [searchQuery, setSearchQuery] = useState('')
 
   useEffect(() => {
     const loadData = async () => {
