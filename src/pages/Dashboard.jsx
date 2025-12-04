@@ -126,11 +126,15 @@ const fetchSitesData = async () => {
     const proxyUrl = CORS_PROXY + encodeURIComponent(CSV_URL)
     console.log('Attempting to fetch from CORS proxy')
 
+    const controller = new AbortController()
+    const timeoutId = setTimeout(() => controller.abort(), 5000)
+
     const response = await fetch(proxyUrl, {
       method: 'GET',
-      signal: AbortSignal.timeout(5000),
+      signal: controller.signal,
     })
 
+    clearTimeout(timeoutId)
     console.log('Response status:', response.status)
 
     if (!response.ok) {
