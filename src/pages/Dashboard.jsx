@@ -159,8 +159,8 @@ export default function Dashboard({ onLogout }) {
     return () => clearInterval(interval)
   }, [])
 
-  const allSites = [...mockData.today, ...mockData.comingIn3Days, ...mockData.due]
-  const comingSoon = [...mockData.comingIn3Days]
+  const allSites = [...mockData.today, ...mockData.tomorrow, ...mockData.comingIn3Days, ...mockData.due]
+  const comingSoon = [...mockData.tomorrow, ...mockData.comingIn3Days]
 
   const handleLogout = () => {
     if (onLogout) {
