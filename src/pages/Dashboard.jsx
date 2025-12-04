@@ -323,22 +323,27 @@ export default function Dashboard({ onLogout }) {
         )}
 
         <div className="dashboard-layout">
-          <div className="left-column">
-            <div className="date-time-label">
-              <p>{getCurrentDateTime()}</p>
-            </div>
-
-            <div className="search-download-row">
-              <input
-                type="text"
-                placeholder="Search by site name..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="search-input-large"
-              />
-              <button className="download-button" onClick={handleDownload}>
-                📥 Download
-              </button>
+          <div className="hero-section">
+            <div className="hero-header">
+              <div className="hero-left">
+                <div className="date-time-label">
+                  <p>{getCurrentDateTime()}</p>
+                </div>
+              </div>
+              <div className="hero-right">
+                <div className="search-download-row">
+                  <input
+                    type="text"
+                    placeholder="Search by site name..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="search-input-large"
+                  />
+                  <button className="download-button" onClick={handleDownload}>
+                    📥 Download
+                  </button>
+                </div>
+              </div>
             </div>
 
             <div className="kpi-grid">
@@ -384,76 +389,80 @@ export default function Dashboard({ onLogout }) {
                 <div className="kpi-label">Due (Overdue)</div>
               </div>
             </div>
+          </div>
 
-            <DonutChart totalSites={allSites.length} dueSites={mockData.due.length} />
+          <div className="content-section">
+            <div className="main-content">
+              <DonutChart totalSites={allSites.length} dueSites={mockData.due.length} />
 
-            <div className="tables-container">
-              <div className="table-card">
-                <div className="table-header">
-                  <h3>Due (Overdue)</h3>
-                  <span className="table-count">{filteredDue.length}</span>
-                </div>
-                <div className="table-wrapper">
-                  <div className="table-header-row">
-                    <span>Site Name</span>
-                    <span>Date</span>
+              <div className="tables-container">
+                <div className="table-card">
+                  <div className="table-header">
+                    <h3>Due (Overdue)</h3>
+                    <span className="table-count">{filteredDue.length}</span>
                   </div>
-                  <div className="table-body">
-                    {filteredDue.length === 0 ? (
-                      <div className="table-empty">No overdue sites</div>
-                    ) : (
-                      filteredDue.map(site => (
-                        <div key={site.id} className="table-row">
-                          <span className="cell-site-name">{site.siteName}</span>
-                          <span className="cell-date">{formatDate(site.date)}</span>
-                        </div>
-                      ))
-                    )}
+                  <div className="table-wrapper">
+                    <div className="table-header-row">
+                      <span>Site Name</span>
+                      <span>Date</span>
+                    </div>
+                    <div className="table-body">
+                      {filteredDue.length === 0 ? (
+                        <div className="table-empty">No overdue sites</div>
+                      ) : (
+                        filteredDue.map(site => (
+                          <div key={site.id} className="table-row">
+                            <span className="cell-site-name">{site.siteName}</span>
+                            <span className="cell-date">{formatDate(site.date)}</span>
+                          </div>
+                        ))
+                      )}
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              <div className="table-card">
-                <div className="table-header">
-                  <h3>Today Schedule</h3>
-                  <span className="table-count">{filteredToday.length}</span>
-                </div>
-                <div className="table-wrapper">
-                  <div className="table-header-row">
-                    <span>Site Name</span>
-                    <span>Date</span>
+                <div className="table-card">
+                  <div className="table-header">
+                    <h3>Today Schedule</h3>
+                    <span className="table-count">{filteredToday.length}</span>
                   </div>
-                  <div className="table-body">
-                    {filteredToday.length === 0 ? (
-                      <div className="table-empty">No sites scheduled for today</div>
-                    ) : (
-                      filteredToday.map(site => (
-                        <div key={site.id} className="table-row">
-                          <span className="cell-site-name">{site.siteName}</span>
-                          <span className="cell-date">{formatDate(site.date)}</span>
-                        </div>
-                      ))
-                    )}
+                  <div className="table-wrapper">
+                    <div className="table-header-row">
+                      <span>Site Name</span>
+                      <span>Date</span>
+                    </div>
+                    <div className="table-body">
+                      {filteredToday.length === 0 ? (
+                        <div className="table-empty">No sites scheduled for today</div>
+                      ) : (
+                        filteredToday.map(site => (
+                          <div key={site.id} className="table-row">
+                            <span className="cell-site-name">{site.siteName}</span>
+                            <span className="cell-date">{formatDate(site.date)}</span>
+                          </div>
+                        ))
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
 
-          <div className="right-column">
-            <div className="map-container">
-              <div className="map-header-section">
-                <div>
-                  <p className="eyebrow">Live Map</p>
-                  <h3>Fueling Commitments</h3>
+            <div className="sidebar">
+              <div className="map-container">
+                <div className="map-header-section">
+                  <div>
+                    <p className="eyebrow">Live Map</p>
+                    <h3>Fueling Commitments</h3>
+                  </div>
+                  <div className="map-legend">
+                    <span className="legend-dot" style={{ background: '#facc15' }}></span> Today
+                    <span className="legend-dot" style={{ background: '#ef4444' }}></span> Due
+                    <span className="legend-dot" style={{ background: '#22c55e' }}></span> Coming in 3 Days
+                  </div>
                 </div>
-                <div className="map-legend">
-                  <span className="legend-dot" style={{ background: '#facc15' }}></span> Today
-                  <span className="legend-dot" style={{ background: '#ef4444' }}></span> Due
-                  <span className="legend-dot" style={{ background: '#22c55e' }}></span> Coming in 3 Days
-                </div>
+                <SiteMap sites={sitesWithCoordinates} />
               </div>
-              <SiteMap sites={sitesWithCoordinates} />
             </div>
           </div>
         </div>
