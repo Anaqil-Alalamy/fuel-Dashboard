@@ -134,6 +134,7 @@ const getMockFallbackData = () => {
       { id: 5, siteName: 'GSM Harbor Facility', lat: 40.6501, lng: -73.9496, date: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], status: 'due' },
       { id: 6, siteName: 'GSM Mountain Site', lat: 40.7614, lng: -73.9776, date: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], status: 'due' },
     ],
+    unscheduled: [],
   }
 }
 
