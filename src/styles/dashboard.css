@@ -165,10 +165,35 @@
 .section-navigation {
   display: flex;
   gap: 12px;
-  margin-bottom: 30px;
+  margin-bottom: 20px;
   border-bottom: 2px solid var(--border-gray);
   padding-bottom: 0;
   flex-wrap: wrap;
+}
+
+.search-section {
+  margin-bottom: 24px;
+}
+
+.search-input {
+  width: 100%;
+  padding: 12px 16px;
+  font-size: 14px;
+  border: 1px solid var(--border-gray);
+  border-radius: 6px;
+  background: var(--white);
+  color: var(--text-dark);
+  transition: all 0.2s ease;
+}
+
+.search-input::placeholder {
+  color: var(--text-light);
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: var(--primary-blue);
+  box-shadow: 0 0 0 3px rgba(0, 153, 216, 0.1);
 }
 
 .section-tab {
