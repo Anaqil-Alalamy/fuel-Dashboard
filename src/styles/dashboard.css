@@ -214,48 +214,8 @@
   color: var(--text-dark);
 }
 
-.view-toggles {
-  display: flex;
-  gap: 8px;
-  background: var(--white);
-  padding: 6px;
-  border-radius: 8px;
-  border: 1px solid var(--border-gray);
-}
-
-.view-toggle {
-  width: 40px;
-  height: 40px;
-  padding: 8px;
-  background: transparent;
-  border: none;
-  border-radius: 6px;
-  color: var(--text-light);
-  cursor: pointer;
-  transition: all 0.2s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.view-toggle:hover {
-  color: var(--primary-blue);
-  background: var(--light-gray);
-}
-
-.view-toggle.active {
-  background: var(--primary-blue);
-  color: var(--white);
-}
-
 .section-content {
   min-height: 400px;
-}
-
-.cards-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-  gap: 20px;
 }
 
 .empty-state {
