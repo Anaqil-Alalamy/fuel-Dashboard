@@ -1,9 +1,12 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import FuelingCard from '../components/FuelingCard'
 import FuelingTable from '../components/FuelingTable'
 import DashboardSidebar from '../components/DashboardSidebar'
 import MapPanel from '../components/MapPanel'
+import { fetchCsvData } from '../utils/csvParser'
 import '../styles/dashboard.css'
+
+const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRDnTkwpbgsnY_i60u3ZleNs1DL3vMdG3fYHMrr5rwVDqMb3GpgKH40Y-7WQsEzEAi-wDHwLaimN8NC/pub?output=csv'
 
 const mockData = {
   today: [
@@ -28,6 +31,33 @@ const mockData = {
 export default function Dashboard({ onLogout }) {
   const [viewMode, setViewMode] = useState('cards')
   const [activeSection, setActiveSection] = useState('today')
+  const [dashboardData, setDashboardData] = useState(mockData)
+  const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState(null)
+
+  useEffect(() => {
+    const loadData = async () => {
+      setIsLoading(true)
+      setError(null)
+      try {
+        const csvData = await fetchCsvData(CSV_URL)
+        if (csvData) {
+          setDashboardData(csvData)
+        } else {
+          setError('Failed to load data from spreadsheet')
+          setDashboardData(mockData)
+        }
+      } catch (err) {
+        console.error('Error loading dashboard data:', err)
+        setError('Error loading data. Using fallback data.')
+        setDashboardData(mockData)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    loadData()
+  }, [])
 
   const handleLogout = () => {
     if (onLogout) {
@@ -38,13 +68,13 @@ export default function Dashboard({ onLogout }) {
   const getSectionData = () => {
     switch (activeSection) {
       case 'today':
-        return mockData.today
+        return dashboardData.today
       case 'tomorrow':
-        return mockData.tomorrow
+        return dashboardData.tomorrow
       case 'coming3days':
-        return mockData.comingIn3Days
+        return dashboardData.comingIn3Days
       case 'due':
-        return mockData.due
+        return dashboardData.due
       default:
         return []
     }
