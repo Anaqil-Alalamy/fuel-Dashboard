@@ -14,7 +14,6 @@ const SECTIONS = [
 ]
 
 export default function Dashboard({ onLogout }) {
-  const [viewMode, setViewMode] = useState('cards')
   const [activeSection, setActiveSection] = useState('today')
   const [allData, setAllData] = useState([])
   const [organizedData, setOrganizedData] = useState(null)
@@ -123,38 +122,12 @@ export default function Dashboard({ onLogout }) {
 
           <div className="section-header">
             <h2 className="section-title">{getSectionTitle()}</h2>
-            <div className="view-toggles">
-              <button
-                className={`view-toggle ${viewMode === 'cards' ? 'active' : ''}`}
-                onClick={() => setViewMode('cards')}
-                title="Card View"
-              >
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
-                  <path d="M3 4a2 2 0 012-2h10a2 2 0 012 2v10a2 2 0 01-2 2H5a2 2 0 01-2-2V4z" />
-                </svg>
-              </button>
-              <button
-                className={`view-toggle ${viewMode === 'table' ? 'active' : ''}`}
-                onClick={() => setViewMode('table')}
-                title="Table View"
-              >
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
-                  <path d="M2 4a2 2 0 012-2h12a2 2 0 012 2v12a2 2 0 01-2 2H4a2 2 0 01-2-2V4zm2 2v2h2V6H4zm0 4v2h2v-2H4zm0 4v2h2v-2H4zm4-8v2h2V6H8zm0 4v2h2v-2H8zm0 4v2h2v-2H8zm4-8v2h2V6h-2zm0 4v2h2v-2h-2zm0 4v2h2v-2h-2z" />
-                </svg>
-              </button>
-            </div>
           </div>
 
           <div className="section-content">
             {sectionData.length === 0 ? (
               <div className="empty-state">
                 <p>No fueling plans scheduled for this period.</p>
-              </div>
-            ) : viewMode === 'cards' ? (
-              <div className="cards-grid">
-                {sectionData.map((item) => (
-                  <FuelingCard key={item.id} data={item} section={activeSection} />
-                ))}
               </div>
             ) : (
               <FuelingTable data={sectionData} section={activeSection} />
