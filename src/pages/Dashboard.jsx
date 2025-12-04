@@ -1,34 +1,87 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import SummaryCard from '../components/SummaryCard'
 import ExpandableTable from '../components/ExpandableTable'
 import SiteMap from '../components/SiteMap'
 import '../styles/dashboard.css'
 
-const today = new Date()
-const tomorrow = new Date(today.getTime() + 24 * 60 * 60 * 1000)
-const in3Days = new Date(today.getTime() + 3 * 24 * 60 * 60 * 1000)
+const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRDnTkwpbgsnY_i60u3ZleNs1DL3vMdG3fYHMrr5rwVDqMb3GpgKH40Y-7WQsEzEAi-wDHwLaimN8NC/pub?output=csv'
 
-const mockData = {
-  today: [
-    { id: 1, siteName: 'GSM Downtown', fuelType: 'Diesel', quantity: '500L', status: 'pending', date: today.toISOString().split('T')[0], lat: 40.7128, lng: -74.0060 },
-    { id: 2, siteName: 'GSM Airport Hub', fuelType: 'Petrol', quantity: '300L', status: 'in-progress', date: today.toISOString().split('T')[0], lat: 40.7614, lng: -73.9776 },
-  ],
-  tomorrow: [
-    { id: 3, siteName: 'GSM North Terminal', fuelType: 'Diesel', quantity: '450L', status: 'scheduled', date: tomorrow.toISOString().split('T')[0], lat: 40.7282, lng: -73.7949 },
-    { id: 4, siteName: 'GSM East Port', fuelType: 'Petrol', quantity: '350L', status: 'scheduled', date: tomorrow.toISOString().split('T')[0], lat: 40.6501, lng: -73.9496 },
-  ],
-  comingIn3Days: [
-    { id: 5, siteName: 'GSM West Branch', fuelType: 'Diesel', quantity: '600L', status: 'scheduled', date: in3Days.toISOString().split('T')[0], lat: 40.7245, lng: -74.0427 },
-    { id: 6, siteName: 'GSM Central Depot', fuelType: 'Petrol', quantity: '400L', status: 'scheduled', date: in3Days.toISOString().split('T')[0], lat: 40.7489, lng: -73.9680 },
-    { id: 7, siteName: 'GSM South Station', fuelType: 'Diesel', quantity: '550L', status: 'scheduled', date: in3Days.toISOString().split('T')[0], lat: 40.6850, lng: -73.9817 },
-  ],
-  due: [
-    { id: 8, siteName: 'GSM Harbor Facility', fuelType: 'Diesel', quantity: '700L', status: 'overdue', daysOverdue: 2, date: new Date(today.getTime() - 2 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], lat: 40.6995, lng: -74.0091 },
-    { id: 9, siteName: 'GSM Mountain Site', fuelType: 'Petrol', quantity: '250L', status: 'overdue', daysOverdue: 1, date: new Date(today.getTime() - 1 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], lat: 40.6892, lng: -73.9760 },
-  ],
+const parseCSV = (csvText) => {
+  const lines = csvText.trim().split('\n')
+  const headers = lines[0].split(',').map(h => h.trim())
+  const sites = []
+
+  for (let i = 1; i < lines.length; i++) {
+    const values = lines[i].split(',').map(v => v.trim())
+    if (values.length < 14) continue
+
+    const site = {
+      id: i,
+      siteName: values[0],
+      lat: parseFloat(values[5]),
+      lng: parseFloat(values[6]),
+      date: values[13],
+    }
+
+    if (site.siteName && !isNaN(site.lat) && !isNaN(site.lng) && site.date) {
+      sites.push(site)
+    }
+  }
+
+  return sites
 }
 
-const allSites = [...mockData.today, ...mockData.tomorrow, ...mockData.comingIn3Days, ...mockData.due]
+const categorizeSites = (sites) => {
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
+
+  const tomorrow = new Date(today)
+  tomorrow.setDate(tomorrow.getDate() + 1)
+
+  const in3Days = new Date(today)
+  in3Days.setDate(in3Days.getDate() + 3)
+
+  const categorized = {
+    today: [],
+    tomorrow: [],
+    comingIn3Days: [],
+    due: [],
+  }
+
+  sites.forEach((site) => {
+    const siteDate = new Date(site.date)
+    siteDate.setHours(0, 0, 0, 0)
+
+    if (siteDate < today) {
+      categorized.due.push({ ...site, status: 'overdue' })
+    } else if (siteDate.getTime() === today.getTime()) {
+      categorized.today.push({ ...site, status: 'pending' })
+    } else if (siteDate.getTime() === tomorrow.getTime()) {
+      categorized.tomorrow.push({ ...site, status: 'scheduled' })
+    } else if (siteDate <= in3Days) {
+      categorized.comingIn3Days.push({ ...site, status: 'scheduled' })
+    }
+  })
+
+  return categorized
+}
+
+const fetchSitesData = async () => {
+  try {
+    const response = await fetch(CSV_URL)
+    const csvText = await response.text()
+    const sites = parseCSV(csvText)
+    return categorizeSites(sites)
+  } catch (error) {
+    console.error('Error fetching sites data:', error)
+    return {
+      today: [],
+      tomorrow: [],
+      comingIn3Days: [],
+      due: [],
+    }
+  }
+}
 
 export default function Dashboard({ onLogout }) {
   const [expandedTables, setExpandedTables] = useState({ today: true, tomorrow: false, coming3days: false, due: false })
