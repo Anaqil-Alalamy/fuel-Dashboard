@@ -4,7 +4,7 @@ import SiteMap from '../components/SiteMap'
 import DonutChart from '../components/DonutChart'
 import '../styles/dashboard.css'
 
-const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRDnTkwpbgsnY_i60u3ZleNs1DL3vMdG3fYHMrr5rwVDqMb3GpgKH40Y-7WQsEzEAi-wDHwLaimN8NC/pub?output=csv'
+const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRDnTkwpbgsnY_i60u3ZleNs1DL3vMdG3fYHMrr5rwVDqMb3GpgKH40Y-7WQsEzEAi-wDHwLaimN8NC/pub?gid=1&output=csv'
 
 const parseCSV = (csvText) => {
   const lines = csvText.trim().split('\n')
