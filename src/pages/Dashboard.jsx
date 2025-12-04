@@ -135,11 +135,22 @@ const fetchSitesData = async () => {
         signal: controller.signal,
       })
     } catch (directFetchError) {
-      console.log('Direct fetch failed, trying CORS proxy...')
-      response = await fetch(CORS_PROXY + encodeURIComponent(CSV_URL), {
-        method: 'GET',
-        signal: controller.signal,
-      })
+      clearTimeout(timeoutId)
+      console.log('Direct fetch failed, trying CORS proxy...', directFetchError.message)
+
+      const fallbackController = new AbortController()
+      const fallbackTimeoutId = setTimeout(() => fallbackController.abort(), 8000)
+
+      try {
+        response = await fetch(CORS_PROXY + encodeURIComponent(CSV_URL), {
+          method: 'GET',
+          signal: fallbackController.signal,
+        })
+        clearTimeout(fallbackTimeoutId)
+      } catch (fallbackError) {
+        clearTimeout(fallbackTimeoutId)
+        throw fallbackError
+      }
     }
 
     clearTimeout(timeoutId)
