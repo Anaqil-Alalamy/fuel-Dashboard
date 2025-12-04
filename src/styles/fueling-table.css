@@ -81,11 +81,6 @@
   .fueling-table th {
     font-size: 11px;
   }
-
-  .table-status-badge {
-    font-size: 10px;
-    padding: 3px 8px;
-  }
 }
 
 @media (max-width: 480px) {
@@ -94,7 +89,7 @@
   }
 
   .fueling-table {
-    min-width: 600px;
+    min-width: 400px;
   }
 
   .fueling-table th,
@@ -105,10 +100,5 @@
 
   .fueling-table th {
     font-size: 10px;
-  }
-
-  .table-action-button {
-    padding: 5px 8px;
-    font-size: 11px;
   }
 }
