@@ -288,44 +288,51 @@ body {
 
 /* Layout Grid */
 .dashboard-layout {
-  display: grid;
-  grid-template-columns: 38% 62%;
-  gap: 36px;
-  align-items: start;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
 }
 
-.left-column {
+.hero-section {
   display: flex;
   flex-direction: column;
   gap: 24px;
-  max-height: calc(100vh - 220px);
-  overflow-y: auto;
-  padding-right: 8px;
 }
 
-.left-column::-webkit-scrollbar {
-  width: 8px;
+.hero-header {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  gap: 24px;
+  align-items: center;
 }
 
-.left-column::-webkit-scrollbar-track {
-  background: rgba(0, 0, 0, 0.02);
-  border-radius: 4px;
+.hero-left {
+  display: flex;
+  align-items: center;
 }
 
-.left-column::-webkit-scrollbar-thumb {
-  background: var(--primary-blue-light);
-  border-radius: 4px;
-  transition: background var(--transition-base);
+.hero-right {
+  display: flex;
+  justify-content: flex-end;
 }
 
-.left-column::-webkit-scrollbar-thumb:hover {
-  background: var(--primary-blue-dark);
+.content-section {
+  display: grid;
+  grid-template-columns: 65% 35%;
+  gap: 32px;
+  align-items: start;
 }
 
-.right-column {
+.main-content {
   display: flex;
   flex-direction: column;
-  gap: 0;
+  gap: 24px;
+}
+
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
 }
 
 /* Date Time Label */
