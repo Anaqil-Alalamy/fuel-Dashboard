@@ -1,4 +1,5 @@
-import { MapContainer, TileLayer, CircleMarker, Popup, LayersControl, LayerGroup } from 'react-leaflet'
+import { useMemo, useEffect } from 'react'
+import { MapContainer, TileLayer, CircleMarker, Popup, LayersControl, LayerGroup, useMap } from 'react-leaflet'
 import 'leaflet/dist/leaflet.css'
 import '../styles/site-map.css'
 
@@ -11,29 +12,50 @@ export default function SiteMap({ sites }) {
         return '#0099D8'
       case 'scheduled':
         return '#22c55e'
-      case 'overdue':
+      case 'due':
         return '#ef4444'
       default:
-        return '#fbbf24'
+        return '#38bdf8'
     }
   }
 
   const getStatusLabel = (status) => {
     const labels = {
-      pending: 'Pending',
-      'in-progress': 'In Progress',
-      scheduled: 'Scheduled',
-      overdue: 'Overdue',
+      today: 'Today',
+      comingSoon: 'Coming in 3 Days',
+      due: 'Due',
     }
     return labels[status] || status
   }
 
-  const center = [40.7128, -74.0060]
+  const initialCenter = useMemo(() => {
+    if (sites.length > 0) {
+      return [sites[0].lat, sites[0].lng]
+    }
+    return [24.7136, 46.6753]
+  }, [sites])
+
+  function MapBounds({ points, fallbackCenter }) {
+    const map = useMap()
+
+    useEffect(() => {
+      if (!map) return
+
+      if (points.length === 0) {
+        map.setView(fallbackCenter, 5)
+        return
+      }
+
+      const bounds = points.map((point) => [point.lat, point.lng])
+      map.fitBounds(bounds, { padding: [40, 40] })
+    }, [map, points, fallbackCenter])
+
+    return null
+  }
 
   return (
     <div className="site-map">
-      <h3 className="map-title">Sites Map</h3>
-      <MapContainer center={center} zoom={11} scrollWheelZoom={true} className="map-container">
+      <MapContainer center={initialCenter} zoom={11} scrollWheelZoom={true} className="map-container">
         <LayersControl position="topright">
           <LayersControl.BaseLayer name="Street Map" checked>
             <TileLayer
@@ -89,6 +111,7 @@ export default function SiteMap({ sites }) {
             </LayerGroup>
           </LayersControl.Overlay>
         </LayersControl>
+        <MapBounds points={sites} fallbackCenter={initialCenter} />
       </MapContainer>
     </div>
   )

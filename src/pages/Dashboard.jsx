@@ -14,9 +14,6 @@ const parseCSV = (csvText) => {
     return sites
   }
 
-  console.log('CSV Header:', lines[0])
-  console.log('Total lines:', lines.length)
-
   for (let i = 1; i < lines.length; i++) {
     if (!lines[i].trim()) continue
 
@@ -50,8 +47,6 @@ const parseCSV = (csvText) => {
     const lng = parseFloat(values[6])
     const date = values[13]
 
-    console.log(`Row ${i}:`, { siteName, lat, lng, date })
-
     if (siteName && !isNaN(lat) && !isNaN(lng) && date) {
       sites.push({
         id: i,
@@ -62,8 +57,6 @@ const parseCSV = (csvText) => {
       })
     }
   }
-
-  console.log('Parsed sites:', sites)
   return sites
 }
 
@@ -84,15 +77,11 @@ const categorizeSites = (sites) => {
   const today = new Date()
   today.setHours(0, 0, 0, 0)
 
-  const tomorrow = new Date(today)
-  tomorrow.setDate(tomorrow.getDate() + 1)
-
   const in3Days = new Date(today)
   in3Days.setDate(in3Days.getDate() + 3)
 
   const categorized = {
     today: [],
-    tomorrow: [],
     comingIn3Days: [],
     due: [],
   }
@@ -102,13 +91,11 @@ const categorizeSites = (sites) => {
     if (!siteDate) return
 
     if (siteDate < today) {
-      categorized.due.push({ ...site, status: 'overdue' })
+      categorized.due.push({ ...site, status: 'due' })
     } else if (siteDate.getTime() === today.getTime()) {
-      categorized.today.push({ ...site, status: 'pending' })
-    } else if (siteDate.getTime() === tomorrow.getTime()) {
-      categorized.tomorrow.push({ ...site, status: 'scheduled' })
+      categorized.today.push({ ...site, status: 'today' })
     } else if (siteDate <= in3Days) {
-      categorized.comingIn3Days.push({ ...site, status: 'scheduled' })
+      categorized.comingIn3Days.push({ ...site, status: 'comingSoon' })
     }
   })
 
@@ -117,11 +104,10 @@ const categorizeSites = (sites) => {
 
 const fetchSitesData = async () => {
   try {
-    console.log('Fetching from:', CSV_URL)
     const response = await fetch(CSV_URL, {
       method: 'GET',
       headers: {
-        'Accept': 'text/csv',
+        Accept: 'text/csv',
       },
     })
 
@@ -130,13 +116,9 @@ const fetchSitesData = async () => {
     }
 
     const csvText = await response.text()
-    console.log('CSV fetched successfully, length:', csvText.length)
-    console.log('First 500 chars:', csvText.substring(0, 500))
-
     const sites = parseCSV(csvText)
     const categorized = categorizeSites(sites)
 
-    console.log('Categorized data:', categorized)
     return categorized
   } catch (error) {
     console.error('Error fetching sites data:', error)
@@ -147,7 +129,6 @@ const fetchSitesData = async () => {
 export default function Dashboard({ onLogout }) {
   const [mockData, setMockData] = useState({
     today: [],
-    tomorrow: [],
     comingIn3Days: [],
     due: [],
   })
@@ -160,7 +141,7 @@ export default function Dashboard({ onLogout }) {
       setError(null)
       try {
         const data = await fetchSitesData()
-        if (data.today.length === 0 && data.tomorrow.length === 0 && data.comingIn3Days.length === 0 && data.due.length === 0) {
+        if (data.today.length === 0 && data.comingIn3Days.length === 0 && data.due.length === 0) {
           setError('No data found in the Google Sheet. Please check that the spreadsheet is published and accessible.')
         }
         setMockData(data)
