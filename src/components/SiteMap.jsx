@@ -30,7 +30,10 @@ export default function SiteMap({ sites }) {
 
   const initialCenter = useMemo(() => {
     if (sites.length > 0) {
-      return [sites[0].lat, sites[0].lng]
+      const siteWithCoords = sites.find(s => s.lat && s.lng)
+      if (siteWithCoords) {
+        return [siteWithCoords.lat, siteWithCoords.lng]
+      }
     }
     return [24.7136, 46.6753]
   }, [sites])
