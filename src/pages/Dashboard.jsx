@@ -68,6 +68,19 @@ const parseCSV = (csvText) => {
   return sites
 }
 
+const parseDate = (dateString) => {
+  if (!dateString) return null
+
+  const date = new Date(dateString)
+  if (isNaN(date.getTime())) {
+    console.warn('Invalid date:', dateString)
+    return null
+  }
+
+  date.setHours(0, 0, 0, 0)
+  return date
+}
+
 const categorizeSites = (sites) => {
   const today = new Date()
   today.setHours(0, 0, 0, 0)
@@ -86,8 +99,8 @@ const categorizeSites = (sites) => {
   }
 
   sites.forEach((site) => {
-    const siteDate = new Date(site.date)
-    siteDate.setHours(0, 0, 0, 0)
+    const siteDate = parseDate(site.date)
+    if (!siteDate) return
 
     if (siteDate < today) {
       categorized.due.push({ ...site, status: 'overdue' })
