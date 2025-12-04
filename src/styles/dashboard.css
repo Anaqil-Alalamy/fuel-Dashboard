@@ -263,14 +263,6 @@
   .dashboard-main {
     gap: 20px;
   }
-
-  .content-section {
-    flex: 0 0 65%;
-  }
-
-  .map-section {
-    flex: 0 0 35%;
-  }
 }
 
 @media (max-width: 768px) {
