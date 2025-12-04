@@ -1,33 +1,56 @@
-export async function fetchCsvData(csvUrl) {
+export async function fetchCsvData(csvUrl, sheetName = 'Sheet2') {
   try {
-    const response = await fetch(csvUrl)
+    const sheetUrl = csvUrl.includes('?output=csv')
+      ? csvUrl
+      : `${csvUrl}?output=csv`
+
+    const response = await fetch(sheetUrl)
     if (!response.ok) throw new Error('Failed to fetch CSV')
     const csvText = await response.text()
-    return parseCsvData(csvText)
+    return parseCsvData(csvText, sheetName)
   } catch (error) {
     console.error('Error fetching CSV data:', error)
     return null
   }
 }
 
-function parseCsvData(csvText) {
+function parseCsvData(csvText, sheetName = 'Sheet2') {
   const lines = csvText.trim().split('\n')
   if (lines.length < 2) return null
 
-  const headers = lines[0].split(',').map((h) => h.trim())
-  const rows = lines.slice(1).map((line) => {
+  let dataStartIdx = 0
+
+  if (sheetName === 'Sheet2') {
+    const sheet2Idx = lines.findIndex((line) => line.toLowerCase().includes('sheet2'))
+    if (sheet2Idx !== -1) {
+      dataStartIdx = sheet2Idx + 1
+    }
+  }
+
+  if (dataStartIdx >= lines.length) {
+    console.warn(`${sheetName} not found, using first sheet`)
+    dataStartIdx = 0
+  }
+
+  const headerLine = lines[dataStartIdx] || lines[0]
+  const headers = headerLine.split(',').map((h) => h.trim())
+
+  const dataLines = lines.slice(dataStartIdx + 1).filter((line) => line.trim())
+
+  const rows = dataLines.map((line) => {
     const values = line.split(',').map((v) => v.trim())
     const row = {}
     headers.forEach((header, index) => {
       row[header] = values[index] || ''
+      row[`col${String.fromCharCode(65 + index)}`] = values[index] || ''
     })
     return row
   })
 
-  return organizeFuelingData(rows, headers)
+  return organizeFuelingData(rows)
 }
 
-function organizeFuelingData(rows, headers) {
+function organizeFuelingData(rows) {
   const data = {
     today: [],
     tomorrow: [],
@@ -36,17 +59,26 @@ function organizeFuelingData(rows, headers) {
   }
 
   rows.forEach((row, index) => {
+    const siteName = row['colA'] || row['A'] || row['Site Name'] || row['siteName'] || ''
+
+    if (!siteName) return
+
+    const nextFuelingPlan = row['colN'] || row['N'] || row['Next Fuelling Plan'] || ''
+    const latitude = parseFloat(row['colF'] || row['F'] || row['Latitude'] || 0)
+    const longitude = parseFloat(row['colG'] || row['G'] || row['Longitude'] || 0)
+
     const fuelingItem = {
       id: index + 1,
-      siteName: row['Site Name'] || row['siteName'] || '',
+      siteName: siteName,
       fuelType: row['Fuel Type'] || row['fuelType'] || '',
       quantity: row['Quantity'] || row['quantity'] || '',
-      status: (row['Status'] || row['status'] || '').toLowerCase(),
+      status: (row['Status'] || row['status'] || 'scheduled').toLowerCase(),
       daysOverdue: parseInt(row['Days Overdue'] || row['daysOverdue'] || 0),
-      scheduledDate: row['Scheduled Date'] || row['scheduledDate'] || '',
+      scheduledDate: nextFuelingPlan,
+      latitude: latitude,
+      longitude: longitude,
+      nextFuelingPlan: nextFuelingPlan,
     }
-
-    if (!fuelingItem.siteName) return
 
     const scheduledDate = parseScheduleDate(fuelingItem.scheduledDate)
     const today = new Date()
@@ -59,6 +91,8 @@ function organizeFuelingData(rows, headers) {
     } else if (scheduledDate && isTomorrow(scheduledDate, today)) {
       data.tomorrow.push(fuelingItem)
     } else if (scheduledDate && isWithin3Days(scheduledDate, today)) {
+      data.comingIn3Days.push(fuelingItem)
+    } else {
       data.comingIn3Days.push(fuelingItem)
     }
   })
