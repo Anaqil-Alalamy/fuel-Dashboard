@@ -6,14 +6,20 @@ import '../styles/site-map.css'
 export default function SiteMap({ sites }) {
   const getStatusColor = (status) => {
     switch (status) {
+      case 'today':
+        return '#facc15'
       case 'pending':
         return '#facc15'
       case 'in-progress':
         return '#0099D8'
+      case 'comingSoon':
+        return '#22c55e'
       case 'scheduled':
         return '#22c55e'
       case 'due':
         return '#ef4444'
+      case 'unscheduled':
+        return '#9ca3af'
       default:
         return '#38bdf8'
     }
