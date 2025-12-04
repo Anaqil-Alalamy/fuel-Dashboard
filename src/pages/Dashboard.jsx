@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import StatusCard from '../components/StatusCard'
 import SiteMap from '../components/SiteMap'
+import DonutChart from '../components/DonutChart'
 import '../styles/dashboard.css'
 
 const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRDnTkwpbgsnY_i60u3ZleNs1DL3vMdG3fYHMrr5rwVDqMb3GpgKH40Y-7WQsEzEAi-wDHwLaimN8NC/pub?output=csv'
@@ -126,6 +127,27 @@ const fetchSitesData = async () => {
   }
 }
 
+const formatDate = (dateString) => {
+  const date = new Date(dateString)
+  return date.toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+  })
+}
+
+const getCurrentDateTime = () => {
+  const now = new Date()
+  return now.toLocaleDateString('en-US', {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  })
+}
+
 export default function Dashboard({ onLogout }) {
   const [mockData, setMockData] = useState({
     today: [],
@@ -134,6 +156,9 @@ export default function Dashboard({ onLogout }) {
   })
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+  const [searchTerm, setSearchTerm] = useState('')
+  const [filteredDue, setFilteredDue] = useState([])
+  const [filteredToday, setFilteredToday] = useState([])
 
   useEffect(() => {
     const loadData = async () => {
@@ -159,8 +184,18 @@ export default function Dashboard({ onLogout }) {
     return () => clearInterval(interval)
   }, [])
 
+  useEffect(() => {
+    if (searchTerm.trim() === '') {
+      setFilteredDue(mockData.due)
+      setFilteredToday(mockData.today)
+    } else {
+      const lowerSearch = searchTerm.toLowerCase()
+      setFilteredDue(mockData.due.filter(site => site.siteName.toLowerCase().includes(lowerSearch)))
+      setFilteredToday(mockData.today.filter(site => site.siteName.toLowerCase().includes(lowerSearch)))
+    }
+  }, [searchTerm, mockData])
+
   const allSites = [...mockData.today, ...mockData.comingIn3Days, ...mockData.due]
-  const comingSoon = [...mockData.comingIn3Days]
 
   const handleLogout = () => {
     if (onLogout) {
@@ -168,8 +203,27 @@ export default function Dashboard({ onLogout }) {
     }
   }
 
+  const handleDownload = () => {
+    const csvContent = [
+      ['Site Name', 'Date', 'Status'],
+      ...allSites.map(site => [site.siteName, site.date, site.status || 'unknown']),
+    ]
+      .map(row => row.map(cell => `"${cell}"`).join(','))
+      .join('\n')
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
+    const link = document.createElement('a')
+    const url = URL.createObjectURL(blob)
+    link.setAttribute('href', url)
+    link.setAttribute('download', `fueling-sites-${new Date().toISOString().split('T')[0]}.csv`)
+    link.style.visibility = 'hidden'
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+  }
+
   return (
-    <div className="dashboard-container">
+    <div className="dashboard-main-wrapper">
       <header className="dashboard-header">
         <div className="header-accent-line"></div>
         <div className="header-content">
@@ -203,36 +257,114 @@ export default function Dashboard({ onLogout }) {
           </div>
         )}
 
-        <div className="dashboard-hero">
-          <div>
-            <p className="eyebrow">Overview</p>
-            <h2>Daily Fuel Plan at a Glance</h2>
-            <p className="hero-subtitle">All site commitments in one clean, modern view.</p>
-          </div>
-          <div className="hero-pill">Live Sync</div>
-        </div>
+        <div className="dashboard-layout">
+          <div className="left-column">
+            <div className="date-time-label">
+              <p>{getCurrentDateTime()}</p>
+            </div>
 
-        <div className="dashboard-grid">
-          <div className="cards-column">
-            <StatusCard title="Total Sites" count={allSites.length} accentColor="#38bdf8" data={allSites} />
-            <StatusCard title="Today" count={mockData.today.length} accentColor="#facc15" data={mockData.today} />
-            <StatusCard title="Coming in 3 Days" count={comingSoon.length} accentColor="#22c55e" data={comingSoon} />
-            <StatusCard title="Due" count={mockData.due.length} accentColor="#ef4444" data={mockData.due} />
-          </div>
+            <div className="search-download-row">
+              <input
+                type="text"
+                placeholder="Search by site name..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="search-input-large"
+              />
+              <button className="download-button" onClick={handleDownload}>
+                📥 Download
+              </button>
+            </div>
 
-          <div className="map-panel">
-            <div className="map-header">
-              <div>
-                <p className="eyebrow">Live Map</p>
-                <h3>Fueling Commitments</h3>
+            <div className="kpi-grid">
+              <div className="kpi-card">
+                <div className="kpi-number">{allSites.length}</div>
+                <div className="kpi-label">Total Sites</div>
               </div>
-              <div className="map-legend">
-                <span className="legend-dot" style={{ background: '#facc15' }}></span> Today
-                <span className="legend-dot" style={{ background: '#ef4444' }}></span> Due
-                <span className="legend-dot" style={{ background: '#22c55e' }}></span> Coming in 3 Days
+              <div className="kpi-card">
+                <div className="kpi-number">{mockData.today.length}</div>
+                <div className="kpi-label">Today</div>
+              </div>
+              <div className="kpi-card">
+                <div className="kpi-number">{mockData.comingIn3Days.length}</div>
+                <div className="kpi-label">Coming in 3 Days</div>
+              </div>
+              <div className="kpi-card">
+                <div className="kpi-number">{mockData.due.length}</div>
+                <div className="kpi-label">Due (Overdue)</div>
               </div>
             </div>
-            <SiteMap sites={allSites} />
+
+            <DonutChart totalSites={allSites.length} dueSites={mockData.due.length} />
+
+            <div className="tables-container">
+              <div className="table-card">
+                <div className="table-header">
+                  <h3>Due (Overdue)</h3>
+                  <span className="table-count">{filteredDue.length}</span>
+                </div>
+                <div className="table-wrapper">
+                  <div className="table-header-row">
+                    <span>Site Name</span>
+                    <span>Date</span>
+                  </div>
+                  <div className="table-body">
+                    {filteredDue.length === 0 ? (
+                      <div className="table-empty">No overdue sites</div>
+                    ) : (
+                      filteredDue.map(site => (
+                        <div key={site.id} className="table-row">
+                          <span className="cell-site-name">{site.siteName}</span>
+                          <span className="cell-date">{formatDate(site.date)}</span>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              <div className="table-card">
+                <div className="table-header">
+                  <h3>Today Schedule</h3>
+                  <span className="table-count">{filteredToday.length}</span>
+                </div>
+                <div className="table-wrapper">
+                  <div className="table-header-row">
+                    <span>Site Name</span>
+                    <span>Date</span>
+                  </div>
+                  <div className="table-body">
+                    {filteredToday.length === 0 ? (
+                      <div className="table-empty">No sites scheduled for today</div>
+                    ) : (
+                      filteredToday.map(site => (
+                        <div key={site.id} className="table-row">
+                          <span className="cell-site-name">{site.siteName}</span>
+                          <span className="cell-date">{formatDate(site.date)}</span>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="right-column">
+            <div className="map-container">
+              <div className="map-header-section">
+                <div>
+                  <p className="eyebrow">Live Map</p>
+                  <h3>Fueling Commitments</h3>
+                </div>
+                <div className="map-legend">
+                  <span className="legend-dot" style={{ background: '#facc15' }}></span> Today
+                  <span className="legend-dot" style={{ background: '#ef4444' }}></span> Due
+                  <span className="legend-dot" style={{ background: '#22c55e' }}></span> Coming in 3 Days
+                </div>
+              </div>
+              <SiteMap sites={allSites} />
+            </div>
           </div>
         </div>
       </div>
