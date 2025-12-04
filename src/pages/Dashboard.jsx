@@ -143,7 +143,7 @@ const fetchSitesData = async () => {
     console.log('Attempting to fetch from CSV URL')
 
     const controller = new AbortController()
-    const timeoutId = setTimeout(() => controller.abort(), 8000)
+    const timeoutId = setTimeout(() => controller.abort(), 15000)
 
     const response = await fetch(CSV_URL, {
       method: 'GET',
