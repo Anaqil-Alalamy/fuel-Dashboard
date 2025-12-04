@@ -150,6 +150,22 @@
   }
 }
 
+.error-banner {
+  grid-column: 1 / -1;
+  background: #fef2f2;
+  border: 1px solid #fee2e2;
+  border-radius: 8px;
+  padding: 16px 20px;
+  margin-bottom: 20px;
+}
+
+.error-banner p {
+  margin: 0;
+  font-size: 14px;
+  color: #991b1b;
+  font-weight: 500;
+}
+
 .summary-cards-section {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
