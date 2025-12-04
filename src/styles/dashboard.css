@@ -446,6 +446,10 @@ body {
   transition: all var(--transition-base);
   position: relative;
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
 }
 
 .kpi-card::before {
@@ -472,6 +476,56 @@ body {
   right: -20%;
 }
 
+.kpi-card:hover .kpi-icon-wrapper {
+  transform: scale(1.1) rotate(-5deg);
+}
+
+/* KPI Icon */
+.kpi-icon-wrapper {
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(6, 182, 212, 0.08) 100%);
+  transition: all var(--transition-base);
+  position: relative;
+  z-index: 1;
+}
+
+.kpi-icon {
+  width: 24px;
+  height: 24px;
+  color: var(--primary-blue);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.kpi-icon-wrapper.kpi-icon-today {
+  background: linear-gradient(135deg, rgba(251, 191, 36, 0.1) 0%, rgba(245, 158, 11, 0.08) 100%);
+}
+
+.kpi-icon-wrapper.kpi-icon-today .kpi-icon {
+  color: #f59e0b;
+}
+
+.kpi-icon-wrapper.kpi-icon-upcoming {
+  background: linear-gradient(135deg, rgba(34, 197, 94, 0.1) 0%, rgba(16, 185, 129, 0.08) 100%);
+}
+
+.kpi-icon-wrapper.kpi-icon-upcoming .kpi-icon {
+  color: #10b981;
+}
+
+.kpi-icon-wrapper.kpi-icon-overdue {
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.1) 0%, rgba(220, 38, 38, 0.08) 100%);
+}
+
+.kpi-icon-wrapper.kpi-icon-overdue .kpi-icon {
+  color: #ef4444;
+}
+
 .kpi-number {
   font-size: 36px;
   font-weight: 800;
@@ -479,7 +533,7 @@ body {
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  margin-bottom: 8px;
+  margin-bottom: 4px;
   position: relative;
   z-index: 1;
   font-variant-numeric: tabular-nums;
