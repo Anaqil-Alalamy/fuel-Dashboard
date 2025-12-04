@@ -107,37 +107,38 @@ export default function Dashboard({ onLogout }) {
       </header>
 
       <div className="dashboard-main-wrapper">
-        <DashboardSidebar allData={mockData} />
+        <DashboardSidebar allData={dashboardData} />
 
         <div className="dashboard-content">
+          {error && <div className="data-error-notice">{error}</div>}
           <nav className="section-navigation">
             <button
               className={`section-tab ${activeSection === 'today' ? 'active' : ''}`}
               onClick={() => setActiveSection('today')}
             >
               <span className="tab-label">Today</span>
-              <span className="tab-count">{mockData.today.length}</span>
+              <span className="tab-count">{dashboardData.today.length}</span>
             </button>
             <button
               className={`section-tab ${activeSection === 'tomorrow' ? 'active' : ''}`}
               onClick={() => setActiveSection('tomorrow')}
             >
               <span className="tab-label">Tomorrow</span>
-              <span className="tab-count">{mockData.tomorrow.length}</span>
+              <span className="tab-count">{dashboardData.tomorrow.length}</span>
             </button>
             <button
               className={`section-tab ${activeSection === 'coming3days' ? 'active' : ''}`}
               onClick={() => setActiveSection('coming3days')}
             >
               <span className="tab-label">Coming in 3 Days</span>
-              <span className="tab-count">{mockData.comingIn3Days.length}</span>
+              <span className="tab-count">{dashboardData.comingIn3Days.length}</span>
             </button>
             <button
               className={`section-tab ${activeSection === 'due' ? 'active' : ''}`}
               onClick={() => setActiveSection('due')}
             >
               <span className="tab-label">Due / Behind</span>
-              <span className="tab-count">{mockData.due.length}</span>
+              <span className="tab-count">{dashboardData.due.length}</span>
             </button>
           </nav>
 
