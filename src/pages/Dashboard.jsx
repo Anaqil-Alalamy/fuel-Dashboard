@@ -47,8 +47,19 @@ export default function Dashboard({ onLogout }) {
     return section ? section.label : 'Dashboard'
   }
 
-  const sectionData = getSectionData()
+  const getFilteredData = () => {
+    const data = getSectionData()
+    if (!searchQuery.trim()) return data
+    const query = searchQuery.toLowerCase()
+    return data.filter((item) => item.siteName.toLowerCase().includes(query))
+  }
+
+  const sectionData = getFilteredData()
   const totalSites = getTotalSitesCount(allData)
+
+  const handleSearchChange = (e) => {
+    setSearchQuery(e.target.value)
+  }
 
   if (isLoading) {
     return (
