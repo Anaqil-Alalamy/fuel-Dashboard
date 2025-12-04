@@ -151,6 +151,10 @@ const fetchSitesData = async () => {
 
     const sites = parseCSV(csvText)
     console.log('Parsed sites count:', sites.length)
+    if (sites.length > 0) {
+      console.log('First 3 sites:', sites.slice(0, 3))
+      console.log('Sites with lat/lng:', sites.filter(s => s.lat && s.lng).length)
+    }
 
     const categorized = categorizeSites(sites)
     console.log('Categorized sites:', {
