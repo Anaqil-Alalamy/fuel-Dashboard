@@ -175,7 +175,7 @@ export default function Dashboard({ onLogout }) {
         <div className="header-content">
           <div className="header-logo-section">
             <img
-              src="https://cdn.builder.io/api/v1/image/assets%2Fabc8ab05f7d144f289a582747d3e5ca3%2Fa9cbf8c7a3494e78810477f12dd379b5?format=webp&width=800"
+              src="https://cdn.builder.io/api/v1/image/assets%2Fabc8ab05f7d144f289a582747d3e5ca3%2Fffe83361cdfc400eb47d08d9242e60a7?format=webp&width=800"
               alt="Company Logo"
               className="header-logo"
             />
