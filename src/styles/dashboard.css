@@ -88,6 +88,17 @@
   flex-direction: column;
 }
 
+.data-error-notice {
+  padding: 12px 16px;
+  background: rgba(231, 76, 60, 0.1);
+  border: 1px solid rgba(231, 76, 60, 0.3);
+  border-radius: 6px;
+  color: var(--danger-red);
+  font-size: 13px;
+  font-weight: 500;
+  margin-bottom: 16px;
+}
+
 .section-navigation {
   display: flex;
   gap: 12px;
