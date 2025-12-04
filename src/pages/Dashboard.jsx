@@ -127,19 +127,10 @@ const fetchSitesData = async () => {
     const controller = new AbortController()
     const timeoutId = setTimeout(() => controller.abort(), 8000)
 
-    let response
-    try {
-      response = await fetch(CSV_URL, {
-        method: 'GET',
-        signal: controller.signal,
-      })
-    } catch (directFetchError) {
-      console.log('Direct fetch failed, trying CORS proxy...')
-      response = await fetch(CORS_PROXY + encodeURIComponent(CSV_URL), {
-        method: 'GET',
-        signal: controller.signal,
-      })
-    }
+    const response = await fetch(CSV_URL, {
+      method: 'GET',
+      signal: controller.signal,
+    })
 
     clearTimeout(timeoutId)
     console.log('Response status:', response.status)
