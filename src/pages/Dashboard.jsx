@@ -108,9 +108,8 @@ const fetchSitesData = async () => {
     const response = await fetch(CSV_URL, {
       method: 'GET',
       headers: {
-        Accept: 'text/csv',
+        Accept: 'text/plain',
       },
-      mode: 'cors',
     })
 
     if (!response.ok) {
