@@ -4,7 +4,8 @@ import SiteMap from '../components/SiteMap'
 import DonutChart from '../components/DonutChart'
 import '../styles/dashboard.css'
 
-const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRDnTkwpbgsnY_i60u3ZleNs1DL3vMdG3fYHMrr5rwVDqMb3GpgKH40Y-7WQsEzEAi-wDHwLaimN8NC/pub?output=csv'
+const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRDnTkwpbgsnY_i60u3ZleNs1DL3vMdG3fYHMrr5rwVDqMb3GpgKH40Y-7WQsEzEAi-wDHwLaimN8NC/pub?gid=1&output=csv'
+const CORS_PROXY = 'https://api.allorigins.win/raw?url='
 
 const parseCSV = (csvText) => {
   const lines = csvText.trim().split('\n')
@@ -105,20 +106,31 @@ const categorizeSites = (sites) => {
 
 const fetchSitesData = async () => {
   try {
-    const response = await fetch(CSV_URL, {
+    const proxyUrl = CORS_PROXY + encodeURIComponent(CSV_URL)
+    console.log('Attempting to fetch from CORS proxy')
+
+    const response = await fetch(proxyUrl, {
       method: 'GET',
-      headers: {
-        Accept: 'text/csv',
-      },
     })
+
+    console.log('Response status:', response.status)
 
     if (!response.ok) {
       throw new Error(`HTTP Error: ${response.status} ${response.statusText}`)
     }
 
     const csvText = await response.text()
+    console.log('CSV text length:', csvText.length)
+
     const sites = parseCSV(csvText)
+    console.log('Parsed sites count:', sites.length)
+
     const categorized = categorizeSites(sites)
+    console.log('Categorized sites:', {
+      today: categorized.today.length,
+      comingIn3Days: categorized.comingIn3Days.length,
+      due: categorized.due.length,
+    })
 
     return categorized
   } catch (error) {

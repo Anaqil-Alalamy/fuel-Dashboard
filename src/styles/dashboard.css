@@ -195,12 +195,33 @@
   display: flex;
   flex-direction: column;
   gap: 20px;
+  max-height: calc(100vh - 200px);
+  overflow-y: auto;
+  padding-right: 8px;
+}
+
+.left-column::-webkit-scrollbar {
+  width: 8px;
+}
+
+.left-column::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 4px;
+}
+
+.left-column::-webkit-scrollbar-thumb {
+  background: var(--navy-blue-light);
+  border-radius: 4px;
+}
+
+.left-column::-webkit-scrollbar-thumb:hover {
+  background: var(--navy-blue);
 }
 
 .right-column {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 0;
 }
 
 .date-time-label {
@@ -476,6 +497,11 @@
   .dashboard-layout {
     grid-template-columns: 1fr;
     gap: 24px;
+  }
+
+  .left-column {
+    max-height: none;
+    overflow-y: visible;
   }
 
   .map-container {
