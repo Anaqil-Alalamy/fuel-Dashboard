@@ -28,10 +28,10 @@
 }
 
 .dashboard-header {
-  background: linear-gradient(135deg, var(--navy-blue) 0%, var(--navy-blue-light) 100%);
-  color: var(--white);
+  background: var(--white);
+  color: var(--text-dark);
   padding: 0;
-  box-shadow: 0 10px 30px rgba(30, 58, 138, 0.25);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   position: sticky;
   top: 0;
   z-index: 100;
@@ -82,12 +82,14 @@
   font-weight: 700;
   margin-bottom: 4px;
   letter-spacing: -0.5px;
+  color: var(--navy-blue);
 }
 
 .dashboard-subtitle {
   font-size: 14px;
-  opacity: 0.9;
+  opacity: 0.8;
   font-weight: 500;
+  color: var(--text-light);
 }
 
 .logout-button {
@@ -225,11 +227,11 @@
 }
 
 .date-time-label {
-  background: var(--white);
+  background: #d9e1f0;
   padding: 16px 24px;
   border-radius: 12px;
   box-shadow: var(--card-shadow);
-  border: 1px solid var(--card-border);
+  border: 1px solid #c8d5e8;
 }
 
 .date-time-label p {
@@ -293,11 +295,11 @@
 }
 
 .kpi-card {
-  background: var(--white);
+  background: #d9e1f0;
   border-radius: 20px;
   padding: 24px;
   box-shadow: var(--card-shadow);
-  border: 1px solid var(--card-border);
+  border: 1px solid #c8d5e8;
   text-align: center;
   transition: all 0.3s ease;
 }
@@ -329,11 +331,11 @@
 }
 
 .table-card {
-  background: var(--white);
+  background: #d9e1f0;
   border-radius: 16px;
   padding: 20px;
   box-shadow: var(--card-shadow);
-  border: 1px solid var(--card-border);
+  border: 1px solid #c8d5e8;
   display: flex;
   flex-direction: column;
   gap: 12px;
@@ -446,9 +448,9 @@
 }
 
 .map-container {
-  background: var(--white);
+  background: #d9e1f0;
   border-radius: 16px;
-  border: 1px solid var(--card-border);
+  border: 1px solid #c8d5e8;
   box-shadow: var(--card-shadow);
   padding: 16px;
   display: flex;
