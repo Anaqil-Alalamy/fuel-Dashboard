@@ -235,6 +235,12 @@ export default function Dashboard({ onLogout }) {
   const allSites = [...mockData.today, ...mockData.comingIn3Days, ...mockData.due, ...mockData.unscheduled]
   const sitesWithCoordinates = allSites.filter(site => site.lat !== null && site.lng !== null)
 
+  console.log('Dashboard Debug Info:')
+  console.log('Total sites:', allSites.length)
+  console.log('Sites with coordinates:', sitesWithCoordinates.length)
+  console.log('Sample site:', allSites[0])
+  console.log('Sample site with coords:', sitesWithCoordinates[0])
+
   const handleLogout = () => {
     if (onLogout) {
       onLogout()
