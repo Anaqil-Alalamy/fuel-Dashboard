@@ -118,18 +118,30 @@ const categorizeSites = (sites) => {
 
 const fetchSitesData = async () => {
   try {
-    const response = await fetch(CSV_URL)
+    console.log('Fetching from:', CSV_URL)
+    const response = await fetch(CSV_URL, {
+      method: 'GET',
+      headers: {
+        'Accept': 'text/csv',
+      },
+    })
+
+    if (!response.ok) {
+      throw new Error(`HTTP Error: ${response.status} ${response.statusText}`)
+    }
+
     const csvText = await response.text()
+    console.log('CSV fetched successfully, length:', csvText.length)
+    console.log('First 500 chars:', csvText.substring(0, 500))
+
     const sites = parseCSV(csvText)
-    return categorizeSites(sites)
+    const categorized = categorizeSites(sites)
+
+    console.log('Categorized data:', categorized)
+    return categorized
   } catch (error) {
     console.error('Error fetching sites data:', error)
-    return {
-      today: [],
-      tomorrow: [],
-      comingIn3Days: [],
-      due: [],
-    }
+    throw error
   }
 }
 
