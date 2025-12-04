@@ -10,14 +10,48 @@ const parseCSV = (csvText) => {
   const lines = csvText.trim().split('\n')
   const sites = []
 
+  if (lines.length < 2) {
+    console.error('CSV has no data rows')
+    return sites
+  }
+
+  console.log('CSV Header:', lines[0])
+  console.log('Total lines:', lines.length)
+
   for (let i = 1; i < lines.length; i++) {
-    const values = lines[i].split(',').map(v => v.trim().replace(/^"|"$/g, ''))
-    if (values.length < 14) continue
+    if (!lines[i].trim()) continue
+
+    const row = lines[i]
+    let values = []
+    let current = ''
+    let inQuotes = false
+
+    for (let j = 0; j < row.length; j++) {
+      const char = row[j]
+      if (char === '"') {
+        inQuotes = !inQuotes
+      } else if (char === ',' && !inQuotes) {
+        values.push(current.trim())
+        current = ''
+      } else {
+        current += char
+      }
+    }
+    values.push(current.trim())
+
+    values = values.map(v => v.replace(/^"|"$/g, ''))
+
+    if (values.length < 14) {
+      console.warn(`Row ${i} has only ${values.length} columns, skipping`)
+      continue
+    }
 
     const siteName = values[0]
     const lat = parseFloat(values[5])
     const lng = parseFloat(values[6])
     const date = values[13]
+
+    console.log(`Row ${i}:`, { siteName, lat, lng, date })
 
     if (siteName && !isNaN(lat) && !isNaN(lng) && date) {
       sites.push({
@@ -30,6 +64,7 @@ const parseCSV = (csvText) => {
     }
   }
 
+  console.log('Parsed sites:', sites)
   return sites
 }
 
