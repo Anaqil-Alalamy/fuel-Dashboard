@@ -66,7 +66,7 @@ export default function SiteMap({ sites }) {
 
   return (
     <div className="site-map">
-      <MapContainer center={initialCenter} zoom={11} scrollWheelZoom={true} className="map-container">
+      <MapContainer center={initialCenter} zoom={11} scrollWheelZoom={true} className="leaflet-map">
         <LayersControl position="topright">
           <LayersControl.BaseLayer name="Street Map" checked>
             <TileLayer
