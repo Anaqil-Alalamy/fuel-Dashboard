@@ -221,6 +221,8 @@ export default function Dashboard({ onLogout }) {
   const [searchTerm, setSearchTerm] = useState('')
   const [filteredDue, setFilteredDue] = useState([])
   const [filteredToday, setFilteredToday] = useState([])
+  const [filteredComingSoon, setFilteredComingSoon] = useState([])
+  const [filteredUnscheduled, setFilteredUnscheduled] = useState([])
 
   useEffect(() => {
     const loadData = async () => {
@@ -247,10 +249,14 @@ export default function Dashboard({ onLogout }) {
     if (searchTerm.trim() === '') {
       setFilteredDue(mockData.due)
       setFilteredToday(mockData.today)
+      setFilteredComingSoon(mockData.comingIn3Days)
+      setFilteredUnscheduled(mockData.unscheduled)
     } else {
       const lowerSearch = searchTerm.toLowerCase()
       setFilteredDue(mockData.due.filter(site => site.siteName.toLowerCase().includes(lowerSearch)))
       setFilteredToday(mockData.today.filter(site => site.siteName.toLowerCase().includes(lowerSearch)))
+      setFilteredComingSoon(mockData.comingIn3Days.filter(site => site.siteName.toLowerCase().includes(lowerSearch)))
+      setFilteredUnscheduled(mockData.unscheduled.filter(site => site.siteName.toLowerCase().includes(lowerSearch)))
     }
   }, [searchTerm, mockData])
 
@@ -324,14 +330,30 @@ export default function Dashboard({ onLogout }) {
         )}
 
         <div className="dashboard-layout">
-          <div className="hero-section">
-            <div className="hero-header">
-              <div className="hero-left">
+          <div className="split-layout">
+            <section className="map-panel">
+              <div className="map-panel-header">
+                <div>
+                  <p className="eyebrow">Live Map</p>
+                  <h3>Fueling Commitments</h3>
+                  <p className="map-subtitle">Geographic view of every fueling site and its current schedule.</p>
+                </div>
+                <div className="map-legend">
+                  <span className="legend-dot" style={{ background: '#facc15' }}></span> Today
+                  <span className="legend-dot" style={{ background: '#ef4444' }}></span> Due
+                  <span className="legend-dot" style={{ background: '#22c55e' }}></span> Coming in 3 Days
+                </div>
+              </div>
+              <div className="map-shell">
+                <SiteMap sites={sitesWithCoordinates} />
+              </div>
+            </section>
+
+            <section className="data-panel">
+              <div className="data-panel-head">
                 <div className="date-time-label">
                   <p>{getCurrentDateTime()}</p>
                 </div>
-              </div>
-              <div className="hero-right">
                 <div className="search-download-row">
                   <input
                     type="text"
@@ -345,126 +367,169 @@ export default function Dashboard({ onLogout }) {
                   </button>
                 </div>
               </div>
-            </div>
 
-            <div className="kpi-grid">
-              <div className="kpi-card">
-                <div className="kpi-icon-wrapper">
-                  <svg className="kpi-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-                    <circle cx="12" cy="10" r="3"></circle>
-                  </svg>
-                </div>
-                <div className="kpi-number">{allSites.length}</div>
-                <div className="kpi-label">Total Sites</div>
-              </div>
-              <div className="kpi-card">
-                <div className="kpi-icon-wrapper kpi-icon-today">
-                  <svg className="kpi-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <circle cx="12" cy="12" r="10"></circle>
-                    <polyline points="12 6 12 12 16 14"></polyline>
-                  </svg>
-                </div>
-                <div className="kpi-number">{mockData.today.length}</div>
-                <div className="kpi-label">Today</div>
-              </div>
-              <div className="kpi-card">
-                <div className="kpi-icon-wrapper kpi-icon-upcoming">
-                  <svg className="kpi-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                    <line x1="16" y1="2" x2="16" y2="6"></line>
-                    <line x1="8" y1="2" x2="8" y2="6"></line>
-                    <line x1="3" y1="10" x2="21" y2="10"></line>
-                  </svg>
-                </div>
-                <div className="kpi-number">{mockData.comingIn3Days.length}</div>
-                <div className="kpi-label">Coming in 3 Days</div>
-              </div>
-              <div className="kpi-card">
-                <div className="kpi-icon-wrapper kpi-icon-overdue">
-                  <svg className="kpi-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"></path>
-                  </svg>
-                </div>
-                <div className="kpi-number">{mockData.due.length}</div>
-                <div className="kpi-label">Due (Overdue)</div>
-              </div>
-            </div>
-          </div>
-
-          <div className="content-section">
-            <div className="main-content">
-              <DonutChart totalSites={allSites.length} dueSites={mockData.due.length} />
-
-              <div className="tables-container">
-                <div className="table-card">
-                  <div className="table-header">
-                    <h3>Due (Overdue)</h3>
-                    <span className="table-count">{filteredDue.length}</span>
+              <div className="data-scroll">
+                <div className="kpi-strip">
+                  <div className="kpi-card">
+                    <div className="kpi-icon-wrapper">
+                      <svg className="kpi-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                        <circle cx="12" cy="10" r="3"></circle>
+                      </svg>
+                    </div>
+                    <div className="kpi-number">{allSites.length}</div>
+                    <div className="kpi-label">Total Sites</div>
                   </div>
-                  <div className="table-wrapper">
-                    <div className="table-header-row">
-                      <span>Site Name</span>
-                      <span>Date</span>
+                  <div className="kpi-card">
+                    <div className="kpi-icon-wrapper kpi-icon-today">
+                      <svg className="kpi-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <polyline points="12 6 12 12 16 14"></polyline>
+                      </svg>
                     </div>
-                    <div className="table-body">
-                      {filteredDue.length === 0 ? (
-                        <div className="table-empty">No overdue sites</div>
-                      ) : (
-                        filteredDue.map(site => (
-                          <div key={site.id} className="table-row">
-                            <span className="cell-site-name">{site.siteName}</span>
-                            <span className="cell-date">{formatDate(site.date)}</span>
-                          </div>
-                        ))
-                      )}
+                    <div className="kpi-number">{mockData.today.length}</div>
+                    <div className="kpi-label">Today</div>
+                  </div>
+                  <div className="kpi-card">
+                    <div className="kpi-icon-wrapper kpi-icon-upcoming">
+                      <svg className="kpi-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                        <line x1="16" y1="2" x2="16" y2="6"></line>
+                        <line x1="8" y1="2" x2="8" y2="6"></line>
+                        <line x1="3" y1="10" x2="21" y2="10"></line>
+                      </svg>
                     </div>
+                    <div className="kpi-number">{mockData.comingIn3Days.length}</div>
+                    <div className="kpi-label">Coming in 3 Days</div>
+                  </div>
+                  <div className="kpi-card">
+                    <div className="kpi-icon-wrapper kpi-icon-overdue">
+                      <svg className="kpi-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"></path>
+                      </svg>
+                    </div>
+                    <div className="kpi-number">{mockData.due.length}</div>
+                    <div className="kpi-label">Due (Overdue)</div>
                   </div>
                 </div>
 
-                <div className="table-card">
-                  <div className="table-header">
-                    <h3>Today Schedule</h3>
-                    <span className="table-count">{filteredToday.length}</span>
-                  </div>
-                  <div className="table-wrapper">
-                    <div className="table-header-row">
-                      <span>Site Name</span>
-                      <span>Date</span>
+                <DonutChart totalSites={allSites.length} dueSites={mockData.due.length} />
+
+                <div className="tables-carousel">
+                  <div className="table-card">
+                    <div className="table-header">
+                      <div>
+                        <p className="eyebrow">High Priority</p>
+                        <h3>Due (Overdue)</h3>
+                      </div>
+                      <span className="table-count">{filteredDue.length}</span>
                     </div>
-                    <div className="table-body">
-                      {filteredToday.length === 0 ? (
-                        <div className="table-empty">No sites scheduled for today</div>
-                      ) : (
-                        filteredToday.map(site => (
-                          <div key={site.id} className="table-row">
-                            <span className="cell-site-name">{site.siteName}</span>
-                            <span className="cell-date">{formatDate(site.date)}</span>
-                          </div>
-                        ))
-                      )}
+                    <div className="table-wrapper">
+                      <div className="table-header-row">
+                        <span>Site Name</span>
+                        <span>Date</span>
+                      </div>
+                      <div className="table-body">
+                        {filteredDue.length === 0 ? (
+                          <div className="table-empty">No overdue sites</div>
+                        ) : (
+                          filteredDue.map(site => (
+                            <div key={site.id} className="table-row">
+                              <span className="cell-site-name">{site.siteName}</span>
+                              <span className="cell-date">{formatDate(site.date)}</span>
+                            </div>
+                          ))
+                        )}
+                      </div>
                     </div>
                   </div>
-                </div>
-              </div>
-            </div>
 
-            <div className="sidebar">
-              <div className="map-container">
-                <div className="map-header-section">
-                  <div>
-                    <p className="eyebrow">Live Map</p>
-                    <h3>Fueling Commitments</h3>
+                  <div className="table-card">
+                    <div className="table-header">
+                      <div>
+                        <p className="eyebrow">Today</p>
+                        <h3>Today Schedule</h3>
+                      </div>
+                      <span className="table-count">{filteredToday.length}</span>
+                    </div>
+                    <div className="table-wrapper">
+                      <div className="table-header-row">
+                        <span>Site Name</span>
+                        <span>Date</span>
+                      </div>
+                      <div className="table-body">
+                        {filteredToday.length === 0 ? (
+                          <div className="table-empty">No sites scheduled for today</div>
+                        ) : (
+                          filteredToday.map(site => (
+                            <div key={site.id} className="table-row">
+                              <span className="cell-site-name">{site.siteName}</span>
+                              <span className="cell-date">{formatDate(site.date)}</span>
+                            </div>
+                          ))
+                        )}
+                      </div>
+                    </div>
                   </div>
-                  <div className="map-legend">
-                    <span className="legend-dot" style={{ background: '#facc15' }}></span> Today
-                    <span className="legend-dot" style={{ background: '#ef4444' }}></span> Due
-                    <span className="legend-dot" style={{ background: '#22c55e' }}></span> Coming in 3 Days
+
+                  <div className="table-card">
+                    <div className="table-header">
+                      <div>
+                        <p className="eyebrow">Near Term</p>
+                        <h3>Coming in 3 Days</h3>
+                      </div>
+                      <span className="table-count">{filteredComingSoon.length}</span>
+                    </div>
+                    <div className="table-wrapper">
+                      <div className="table-header-row">
+                        <span>Site Name</span>
+                        <span>Date</span>
+                      </div>
+                      <div className="table-body">
+                        {filteredComingSoon.length === 0 ? (
+                          <div className="table-empty">No upcoming sites in 3 days</div>
+                        ) : (
+                          filteredComingSoon.map(site => (
+                            <div key={site.id} className="table-row">
+                              <span className="cell-site-name">{site.siteName}</span>
+                              <span className="cell-date">{formatDate(site.date)}</span>
+                            </div>
+                          ))
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="table-card">
+                    <div className="table-header">
+                      <div>
+                        <p className="eyebrow">Backlog</p>
+                        <h3>Unscheduled</h3>
+                      </div>
+                      <span className="table-count">{filteredUnscheduled.length}</span>
+                    </div>
+                    <div className="table-wrapper">
+                      <div className="table-header-row">
+                        <span>Site Name</span>
+                        <span>Date</span>
+                      </div>
+                      <div className="table-body">
+                        {filteredUnscheduled.length === 0 ? (
+                          <div className="table-empty">No unscheduled sites</div>
+                        ) : (
+                          filteredUnscheduled.map(site => (
+                            <div key={site.id} className="table-row">
+                              <span className="cell-site-name">{site.siteName}</span>
+                              <span className="cell-date">{formatDate(site.date) || '—'}</span>
+                            </div>
+                          ))
+                        )}
+                      </div>
+                    </div>
                   </div>
                 </div>
-                <SiteMap sites={sitesWithCoordinates} />
               </div>
-            </div>
+            </section>
           </div>
         </div>
       </div>
