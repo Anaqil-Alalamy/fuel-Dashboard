@@ -47,7 +47,7 @@ export default function Login({ onLoginSuccess }) {
       <div className="login-card">
         <div className="logo-section">
           <img
-            src="https://cdn.builder.io/api/v1/image/assets%2Fabc8ab05f7d144f289a582747d3e5ca3%2F0b324f888a424c8eafb46b5a1298f5b4?format=webp&width=800"
+            src="https://cdn.builder.io/api/v1/image/assets%2Fabc8ab05f7d144f289a582747d3e5ca3%2Fb9a6c2f55cf2404bb4acc6a64c5bca07?format=webp&width=800"
             alt="Company Logo"
             className="logo-image"
           />
