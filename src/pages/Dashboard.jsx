@@ -1,35 +1,186 @@
 import { useState, useEffect } from 'react'
-import FuelingTable from '../components/FuelingTable'
-import MapComponent from '../components/MapComponent'
-import { fetchFuelingData, organizeFuelingDataByDate, getTotalSitesCount, getSectionCount } from '../utils/dataUtils'
+import SummaryCard from '../components/SummaryCard'
+import ExpandableTable from '../components/ExpandableTable'
+import SiteMap from '../components/SiteMap'
 import '../styles/dashboard.css'
 
-const SECTIONS = [
-  { id: 'today', label: 'Today', icon: '📅' },
-  { id: 'coming1day', label: 'Coming in 1 Day', icon: '⏭️' },
-  { id: 'coming2days', label: 'Coming in 2 Days', icon: '⏩' },
-  { id: 'coming3days', label: 'Coming in 3 Days', icon: '⏩⏩' },
-  { id: 'due', label: 'Due / Behind Schedule', icon: '⚠️' },
-]
+const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRDnTkwpbgsnY_i60u3ZleNs1DL3vMdG3fYHMrr5rwVDqMb3GpgKH40Y-7WQsEzEAi-wDHwLaimN8NC/pub?output=csv'
+
+const parseCSV = (csvText) => {
+  const lines = csvText.trim().split('\n')
+  const sites = []
+
+  if (lines.length < 2) {
+    console.error('CSV has no data rows')
+    return sites
+  }
+
+  console.log('CSV Header:', lines[0])
+  console.log('Total lines:', lines.length)
+
+  for (let i = 1; i < lines.length; i++) {
+    if (!lines[i].trim()) continue
+
+    const row = lines[i]
+    let values = []
+    let current = ''
+    let inQuotes = false
+
+    for (let j = 0; j < row.length; j++) {
+      const char = row[j]
+      if (char === '"') {
+        inQuotes = !inQuotes
+      } else if (char === ',' && !inQuotes) {
+        values.push(current.trim())
+        current = ''
+      } else {
+        current += char
+      }
+    }
+    values.push(current.trim())
+
+    values = values.map(v => v.replace(/^"|"$/g, ''))
+
+    if (values.length < 14) {
+      console.warn(`Row ${i} has only ${values.length} columns, skipping`)
+      continue
+    }
+
+    const siteName = values[0]
+    const lat = parseFloat(values[5])
+    const lng = parseFloat(values[6])
+    const date = values[13]
+
+    console.log(`Row ${i}:`, { siteName, lat, lng, date })
+
+    if (siteName && !isNaN(lat) && !isNaN(lng) && date) {
+      sites.push({
+        id: i,
+        siteName,
+        lat,
+        lng,
+        date,
+      })
+    }
+  }
+
+  console.log('Parsed sites:', sites)
+  return sites
+}
+
+const parseDate = (dateString) => {
+  if (!dateString) return null
+
+  const date = new Date(dateString)
+  if (isNaN(date.getTime())) {
+    console.warn('Invalid date:', dateString)
+    return null
+  }
+
+  date.setHours(0, 0, 0, 0)
+  return date
+}
+
+const categorizeSites = (sites) => {
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
+
+  const tomorrow = new Date(today)
+  tomorrow.setDate(tomorrow.getDate() + 1)
+
+  const in3Days = new Date(today)
+  in3Days.setDate(in3Days.getDate() + 3)
+
+  const categorized = {
+    today: [],
+    tomorrow: [],
+    comingIn3Days: [],
+    due: [],
+  }
+
+  sites.forEach((site) => {
+    const siteDate = parseDate(site.date)
+    if (!siteDate) return
+
+    if (siteDate < today) {
+      categorized.due.push({ ...site, status: 'overdue' })
+    } else if (siteDate.getTime() === today.getTime()) {
+      categorized.today.push({ ...site, status: 'pending' })
+    } else if (siteDate.getTime() === tomorrow.getTime()) {
+      categorized.tomorrow.push({ ...site, status: 'scheduled' })
+    } else if (siteDate <= in3Days) {
+      categorized.comingIn3Days.push({ ...site, status: 'scheduled' })
+    }
+  })
+
+  return categorized
+}
+
+const fetchSitesData = async () => {
+  try {
+    console.log('Fetching from:', CSV_URL)
+    const response = await fetch(CSV_URL, {
+      method: 'GET',
+      headers: {
+        'Accept': 'text/csv',
+      },
+    })
+
+    if (!response.ok) {
+      throw new Error(`HTTP Error: ${response.status} ${response.statusText}`)
+    }
+
+    const csvText = await response.text()
+    console.log('CSV fetched successfully, length:', csvText.length)
+    console.log('First 500 chars:', csvText.substring(0, 500))
+
+    const sites = parseCSV(csvText)
+    const categorized = categorizeSites(sites)
+
+    console.log('Categorized data:', categorized)
+    return categorized
+  } catch (error) {
+    console.error('Error fetching sites data:', error)
+    throw error
+  }
+}
 
 export default function Dashboard({ onLogout }) {
-  const [activeSection, setActiveSection] = useState('today')
-  const [allData, setAllData] = useState([])
-  const [organizedData, setOrganizedData] = useState(null)
-  const [isLoading, setIsLoading] = useState(true)
-  const [showMap, setShowMap] = useState(true)
-  const [searchQuery, setSearchQuery] = useState('')
+  const [expandedTables, setExpandedTables] = useState({ today: true, tomorrow: false, coming3days: false, due: false })
+  const [mockData, setMockData] = useState({
+    today: [],
+    tomorrow: [],
+    comingIn3Days: [],
+    due: [],
+  })
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
 
   useEffect(() => {
     const loadData = async () => {
-      setIsLoading(true)
-      const data = await fetchFuelingData()
-      setAllData(data)
-      setOrganizedData(organizeFuelingDataByDate(data))
-      setIsLoading(false)
+      setLoading(true)
+      setError(null)
+      try {
+        const data = await fetchSitesData()
+        if (data.today.length === 0 && data.tomorrow.length === 0 && data.comingIn3Days.length === 0 && data.due.length === 0) {
+          setError('No data found in the Google Sheet. Please check that the spreadsheet is published and accessible.')
+        }
+        setMockData(data)
+      } catch (err) {
+        setError(`Failed to fetch data: ${err.message}. Please check the browser console for details.`)
+        console.error('Failed to load data:', err)
+      }
+      setLoading(false)
     }
+
     loadData()
+
+    const interval = setInterval(loadData, 2 * 60 * 1000)
+
+    return () => clearInterval(interval)
   }, [])
+
+  const allSites = [...mockData.today, ...mockData.tomorrow, ...mockData.comingIn3Days, ...mockData.due]
 
   const handleLogout = () => {
     if (onLogout) {
@@ -37,56 +188,26 @@ export default function Dashboard({ onLogout }) {
     }
   }
 
-  const getSectionData = () => {
-    if (!organizedData) return []
-    return organizedData[activeSection] || []
-  }
-
-  const getSectionTitle = () => {
-    const section = SECTIONS.find((s) => s.id === activeSection)
-    return section ? section.label : 'Dashboard'
-  }
-
-  const getFilteredData = () => {
-    const data = getSectionData()
-    if (!searchQuery.trim()) return data
-    const query = searchQuery.toLowerCase()
-    return data.filter((item) => item.siteName.toLowerCase().includes(query))
-  }
-
-  const sectionData = getFilteredData()
-  const totalSites = getTotalSitesCount(allData)
-
-  const handleSearchChange = (e) => {
-    setSearchQuery(e.target.value)
-  }
-
-  if (isLoading) {
-    return (
-      <div className="dashboard-container">
-        <header className="dashboard-header">
-          <div className="header-content">
-            <div className="header-left">
-              <h1 className="dashboard-title">Fueling Dashboard</h1>
-              <p className="dashboard-subtitle">GSM Sites Fueling Plan Management</p>
-            </div>
-            <button className="logout-button" onClick={handleLogout}>
-              Logout
-            </button>
-          </div>
-        </header>
-        <div className="dashboard-content">
-          <div className="loading-spinner">Loading data...</div>
-        </div>
-      </div>
-    )
+  const toggleTable = (section) => {
+    setExpandedTables(prev => ({
+      ...prev,
+      [section]: !prev[section]
+    }))
   }
 
   return (
     <div className="dashboard-container">
       <header className="dashboard-header">
+        <div className="header-accent-line"></div>
         <div className="header-content">
-          <div className="header-left">
+          <div className="header-logo-section">
+            <img
+              src="https://cdn.builder.io/api/v1/image/assets%2Fabc8ab05f7d144f289a582747d3e5ca3%2Fa9cbf8c7a3494e78810477f12dd379b5?format=webp&width=800"
+              alt="Company Logo"
+              className="header-logo"
+            />
+          </div>
+          <div className="header-center">
             <h1 className="dashboard-title">Fueling Dashboard</h1>
             <p className="dashboard-subtitle">GSM Sites Fueling Plan Management</p>
           </div>
@@ -97,65 +218,59 @@ export default function Dashboard({ onLogout }) {
       </header>
 
       <div className="dashboard-content">
-        <div className="dashboard-main">
-          <div className="content-section">
-            <div className="stats-bar">
-              <div className="stat-card">
-                <span className="stat-label">Total Sites</span>
-                <span className="stat-value">{totalSites}</span>
-              </div>
-              {SECTIONS.map((section) => (
-                <div key={section.id} className="stat-card">
-                  <span className="stat-label">{section.label}</span>
-                  <span className="stat-value">{getSectionCount(section.id, organizedData)}</span>
-                </div>
-              ))}
-            </div>
-
-            <nav className="section-navigation">
-              {SECTIONS.map((section) => (
-                <button
-                  key={section.id}
-                  className={`section-tab ${activeSection === section.id ? 'active' : ''}`}
-                  onClick={() => setActiveSection(section.id)}
-                >
-                  <span className="tab-label">{section.label}</span>
-                  <span className="tab-count">{getSectionCount(section.id, organizedData)}</span>
-                </button>
-              ))}
-            </nav>
-
-            <div className="search-section">
-              <input
-                type="text"
-                className="search-input"
-                placeholder="Search by site name..."
-                value={searchQuery}
-                onChange={handleSearchChange}
-              />
-            </div>
-
-            <div className="section-header">
-              <h2 className="section-title">{getSectionTitle()}</h2>
-            </div>
-
-            <div className="section-content">
-              {sectionData.length === 0 ? (
-                <div className="empty-state">
-                  <p>No fueling plans scheduled for this period.</p>
-                </div>
-              ) : (
-                <FuelingTable data={sectionData} section={activeSection} />
-              )}
-            </div>
+        {loading && (
+          <div className="loading-overlay">
+            <div className="loading-spinner"></div>
+            <p>Loading sites data...</p>
+          </div>
+        )}
+        {error && (
+          <div className="error-banner">
+            <p>⚠️ Error loading data: {error}</p>
+          </div>
+        )}
+        <div className="left-content-panel">
+          <div className="summary-cards-section">
+            <SummaryCard title="Total Sites" count={allSites.length} variant="total" />
+            <SummaryCard title="Today" count={mockData.today.length} variant="today" />
+            <SummaryCard title="Tomorrow" count={mockData.tomorrow.length} variant="tomorrow" />
+            <SummaryCard title="Overdue" count={mockData.due.length} variant="overdue" />
           </div>
 
-          <div className="map-section">
-            {showMap && <MapComponent sites={allData} />}
-            <button className="toggle-map-button" onClick={() => setShowMap(!showMap)}>
-              {showMap ? 'Hide Map' : 'Show Map'}
-            </button>
+          <div className="tables-container">
+            <ExpandableTable
+              title="Today"
+              data={mockData.today}
+              isExpanded={expandedTables.today}
+              onToggle={() => toggleTable('today')}
+              statusColor="blue"
+            />
+            <ExpandableTable
+              title="Tomorrow"
+              data={mockData.tomorrow}
+              isExpanded={expandedTables.tomorrow}
+              onToggle={() => toggleTable('tomorrow')}
+              statusColor="yellow"
+            />
+            <ExpandableTable
+              title="Coming in 3 Days"
+              data={mockData.comingIn3Days}
+              isExpanded={expandedTables.coming3days}
+              onToggle={() => toggleTable('coming3days')}
+              statusColor="green"
+            />
+            <ExpandableTable
+              title="Overdue"
+              data={mockData.due}
+              isExpanded={expandedTables.due}
+              onToggle={() => toggleTable('due')}
+              statusColor="red"
+            />
           </div>
+        </div>
+
+        <div className="site-map-container">
+          <SiteMap sites={allSites} />
         </div>
       </div>
     </div>
