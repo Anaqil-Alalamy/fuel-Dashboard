@@ -192,6 +192,7 @@ export default function Dashboard({ onLogout }) {
     today: [],
     comingIn3Days: [],
     due: [],
+    unscheduled: [],
   })
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
