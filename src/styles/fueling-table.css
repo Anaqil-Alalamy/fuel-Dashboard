@@ -57,23 +57,7 @@
 }
 
 .table-row {
-  border-left: 4px solid transparent;
-}
-
-.row-status-pending {
-  border-left-color: var(--warning-orange);
-}
-
-.row-status-in-progress {
-  border-left-color: var(--primary-blue);
-}
-
-.row-status-scheduled {
-  border-left-color: var(--success-green);
-}
-
-.row-status-overdue {
-  border-left-color: var(--danger-red);
+  border-left: 3px solid var(--primary-blue);
 }
 
 .cell-site-name {
