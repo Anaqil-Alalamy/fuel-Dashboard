@@ -80,11 +80,16 @@ const categorizeSites = (sites) => {
     today: [],
     comingIn3Days: [],
     due: [],
+    unscheduled: [],
   }
 
   sites.forEach((site) => {
     const siteDate = parseDate(site.date)
-    if (!siteDate) return
+
+    if (!siteDate) {
+      categorized.unscheduled.push({ ...site, status: 'unscheduled' })
+      return
+    }
 
     if (siteDate < today) {
       categorized.due.push({ ...site, status: 'due' })
@@ -92,6 +97,8 @@ const categorizeSites = (sites) => {
       categorized.today.push({ ...site, status: 'today' })
     } else if (siteDate <= in3Days) {
       categorized.comingIn3Days.push({ ...site, status: 'comingSoon' })
+    } else {
+      categorized.unscheduled.push({ ...site, status: 'unscheduled' })
     }
   })
 
