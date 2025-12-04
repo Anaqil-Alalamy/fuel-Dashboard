@@ -54,14 +54,12 @@
 
 @media (max-width: 768px) {
   .map-container {
-    height: 350px;
-    margin-bottom: 20px;
+    height: 400px;
   }
 }
 
 @media (max-width: 480px) {
   .map-container {
-    height: 250px;
-    margin-bottom: 15px;
+    height: 300px;
   }
 }
