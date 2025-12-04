@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react'
-import FuelingCard from '../components/FuelingCard'
 import FuelingTable from '../components/FuelingTable'
 import MapComponent from '../components/MapComponent'
 import { fetchFuelingData, organizeFuelingDataByDate, getTotalSitesCount, getSectionCount } from '../utils/dataUtils'
