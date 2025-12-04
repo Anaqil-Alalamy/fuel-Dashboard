@@ -91,7 +91,7 @@ export default function SiteMap({ sites }) {
 
           <LayersControl.Overlay name="Sites" checked>
             <LayerGroup>
-              {sites.map((site) => (
+              {sites.filter(site => site.lat && site.lng).map((site) => (
                 <CircleMarker
                   key={site.id}
                   center={[site.lat, site.lng]}
