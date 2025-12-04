@@ -23,20 +23,22 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background: linear-gradient(135deg, var(--dark-blue) 0%, var(--primary-blue) 100%);
-  min-height: 100vh;
+  height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
+  overflow: hidden;
 }
 
 .login-container {
   position: relative;
   width: 100%;
+  height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 100vh;
   padding: 20px;
+  overflow: hidden;
 }
 
 .login-card {
@@ -45,35 +47,37 @@ body {
   box-shadow: 0 20px 60px rgba(0, 51, 102, 0.3);
   width: 100%;
   max-width: 420px;
-  padding: 50px 40px;
+  max-height: 100vh;
+  padding: 35px 40px;
   position: relative;
   z-index: 1;
+  overflow-y: auto;
 }
 
 .logo-section {
   display: flex;
   justify-content: center;
-  margin-bottom: 40px;
-  padding-bottom: 20px;
+  margin-bottom: 25px;
+  padding-bottom: 15px;
   border-bottom: 3px solid var(--accent-yellow);
 }
 
 .logo-image {
-  height: 80px;
+  height: 150px;
   width: auto;
   object-fit: contain;
 }
 
 .form-header {
   text-align: center;
-  margin-bottom: 30px;
+  margin-bottom: 20px;
 }
 
 .login-title {
-  font-size: 28px;
+  font-size: 24px;
   font-weight: 700;
   color: var(--dark-blue);
-  margin-bottom: 8px;
+  margin-bottom: 4px;
   letter-spacing: -0.5px;
 }
 
@@ -96,11 +100,11 @@ body {
 
 .login-form {
   width: 100%;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
 }
 
 .form-group {
-  margin-bottom: 20px;
+  margin-bottom: 15px;
   display: flex;
   flex-direction: column;
 }
@@ -139,9 +143,9 @@ body {
 
 .form-options {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   align-items: center;
-  margin-bottom: 24px;
+  margin-bottom: 18px;
   font-size: 13px;
 }
 
@@ -252,7 +256,7 @@ body {
   }
 
   .logo-image {
-    height: 60px;
+    height: 110px;
   }
 
   .login-title {
@@ -285,7 +289,7 @@ body {
   }
 
   .logo-image {
-    height: 50px;
+    height: 90px;
   }
 
   .login-title {
