@@ -38,25 +38,20 @@ const parseCSV = (csvText) => {
 
     values = values.map(v => v.replace(/^"|"$/g, ''))
 
-    if (values.length < 14) {
-      console.warn(`Row ${i} has only ${values.length} columns, skipping`)
-      continue
-    }
-
     const siteName = values[0]
-    const lat = parseFloat(values[5])
-    const lng = parseFloat(values[6])
-    const date = values[13]
+    if (!siteName) continue
 
-    if (siteName && !isNaN(lat) && !isNaN(lng) && date) {
-      sites.push({
-        id: i,
-        siteName,
-        lat,
-        lng,
-        date,
-      })
-    }
+    const lat = values[5] ? parseFloat(values[5]) : null
+    const lng = values[6] ? parseFloat(values[6]) : null
+    const date = values[13] || null
+
+    sites.push({
+      id: i,
+      siteName,
+      lat: isNaN(lat) ? null : lat,
+      lng: isNaN(lng) ? null : lng,
+      date,
+    })
   }
   return sites
 }
