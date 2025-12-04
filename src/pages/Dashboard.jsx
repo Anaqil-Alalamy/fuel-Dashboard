@@ -142,12 +142,19 @@ export default function Dashboard({ onLogout }) {
     due: [],
   })
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
 
   useEffect(() => {
     const loadData = async () => {
       setLoading(true)
-      const data = await fetchSitesData()
-      setMockData(data)
+      setError(null)
+      try {
+        const data = await fetchSitesData()
+        setMockData(data)
+      } catch (err) {
+        setError(err.message)
+        console.error('Failed to load data:', err)
+      }
       setLoading(false)
     }
 
@@ -200,6 +207,11 @@ export default function Dashboard({ onLogout }) {
           <div className="loading-overlay">
             <div className="loading-spinner"></div>
             <p>Loading sites data...</p>
+          </div>
+        )}
+        {error && (
+          <div className="error-banner">
+            <p>⚠️ Error loading data: {error}</p>
           </div>
         )}
         <div className="left-content-panel">
