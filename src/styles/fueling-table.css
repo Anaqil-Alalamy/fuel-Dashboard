@@ -57,23 +57,7 @@
 }
 
 .table-row {
-  border-left: 4px solid transparent;
-}
-
-.row-status-pending {
-  border-left-color: var(--warning-orange);
-}
-
-.row-status-in-progress {
-  border-left-color: var(--primary-blue);
-}
-
-.row-status-scheduled {
-  border-left-color: var(--success-green);
-}
-
-.row-status-overdue {
-  border-left-color: var(--danger-red);
+  border-left: 3px solid var(--primary-blue);
 }
 
 .cell-site-name {
@@ -81,83 +65,9 @@
   color: var(--text-dark);
 }
 
-.cell-fuel-type {
-  color: var(--text-light);
-}
-
-.cell-quantity {
-  font-weight: 600;
+.cell-fueling-date {
   color: var(--primary-blue);
-}
-
-.cell-overdue {
   font-weight: 600;
-}
-
-.overdue-badge {
-  background: rgba(231, 76, 60, 0.15);
-  color: var(--danger-red);
-  padding: 4px 8px;
-  border-radius: 4px;
-  font-weight: 700;
-  font-size: 12px;
-}
-
-.table-status-badge {
-  display: inline-block;
-  padding: 4px 10px;
-  border-radius: 4px;
-  font-size: 11px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.status-pending {
-  background: rgba(230, 126, 34, 0.15);
-  color: var(--warning-orange);
-}
-
-.status-in-progress {
-  background: rgba(0, 153, 216, 0.15);
-  color: var(--primary-blue);
-}
-
-.status-scheduled {
-  background: rgba(39, 174, 96, 0.15);
-  color: var(--success-green);
-}
-
-.status-overdue {
-  background: rgba(231, 76, 60, 0.15);
-  color: var(--danger-red);
-}
-
-.cell-action {
-  text-align: center;
-}
-
-.table-action-button {
-  padding: 6px 12px;
-  background: var(--primary-blue);
-  color: var(--white);
-  border: none;
-  border-radius: 4px;
-  font-size: 12px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.table-action-button:hover {
-  background: var(--dark-blue);
-  transform: translateY(-1px);
-}
-
-.table-action-button:active {
-  transform: translateY(0);
 }
 
 /* Responsive Design */
@@ -171,11 +81,6 @@
   .fueling-table th {
     font-size: 11px;
   }
-
-  .table-status-badge {
-    font-size: 10px;
-    padding: 3px 8px;
-  }
 }
 
 @media (max-width: 480px) {
@@ -184,7 +89,7 @@
   }
 
   .fueling-table {
-    min-width: 600px;
+    min-width: 400px;
   }
 
   .fueling-table th,
@@ -195,10 +100,5 @@
 
   .fueling-table th {
     font-size: 10px;
-  }
-
-  .table-action-button {
-    padding: 5px 8px;
-    font-size: 11px;
   }
 }
