@@ -41,15 +41,17 @@ const parseCSV = (csvText) => {
     const siteName = values[0]
     if (!siteName) continue
 
-    const lat = values[5] ? parseFloat(values[5]) : null
-    const lng = values[6] ? parseFloat(values[6]) : null
+    const latValue = values[5] ? parseFloat(values[5]) : null
+    const lngValue = values[6] ? parseFloat(values[6]) : null
+    const lat = isNaN(latValue) || latValue === 0 ? null : latValue
+    const lng = isNaN(lngValue) || lngValue === 0 ? null : lngValue
     const date = values[13] || null
 
     sites.push({
       id: i,
       siteName,
-      lat: isNaN(lat) ? null : lat,
-      lng: isNaN(lng) ? null : lng,
+      lat,
+      lng,
       date,
     })
   }
