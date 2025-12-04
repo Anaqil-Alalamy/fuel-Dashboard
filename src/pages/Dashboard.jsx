@@ -401,7 +401,7 @@ export default function Dashboard({ onLogout }) {
                   <span className="legend-dot" style={{ background: '#22c55e' }}></span> Coming in 3 Days
                 </div>
               </div>
-              <SiteMap sites={allSites} />
+              <SiteMap sites={sitesWithCoordinates} />
             </div>
           </div>
         </div>
