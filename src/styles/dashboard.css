@@ -499,6 +499,11 @@
     gap: 24px;
   }
 
+  .left-column {
+    max-height: none;
+    overflow-y: visible;
+  }
+
   .map-container {
     min-height: 400px;
   }
