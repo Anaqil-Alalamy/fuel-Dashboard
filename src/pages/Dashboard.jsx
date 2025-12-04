@@ -39,15 +39,10 @@ const parseCSV = (csvText) => {
 
     values = values.map(v => v.replace(/^"|"$/g, ''))
 
-    if (values.length < 14) {
-      console.warn(`Row ${i} has only ${values.length} columns, skipping`)
-      continue
-    }
-
-    const siteName = values[0]
-    const lat = parseFloat(values[5])
-    const lng = parseFloat(values[6])
-    const date = values[13]
+    const siteName = values[0] ? values[0].trim() : ''
+    const lat = values[5] ? parseFloat(values[5]) : NaN
+    const lng = values[6] ? parseFloat(values[6]) : NaN
+    const date = values[13] ? values[13].trim() : ''
 
     if (siteName && !isNaN(lat) && !isNaN(lng) && date) {
       sites.push({
