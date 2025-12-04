@@ -27,7 +27,7 @@
   border-color: var(--primary-blue-light);
 }
 
-.map-container {
+.leaflet-map {
   height: 100%;
   width: 100%;
   background: linear-gradient(135deg, #f0f9ff 0%, #ecfdf5 100%);
