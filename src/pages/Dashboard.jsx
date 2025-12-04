@@ -41,10 +41,23 @@ const parseCSV = (csvText) => {
     const siteName = values[0]
     if (!siteName) continue
 
-    const latValue = values[5] ? parseFloat(values[5]) : null
-    const lngValue = values[6] ? parseFloat(values[6]) : null
-    const lat = isNaN(latValue) || latValue === 0 ? null : latValue
-    const lng = isNaN(lngValue) || lngValue === 0 ? null : lngValue
+    let lat = null
+    let lng = null
+
+    if (values[5] !== undefined && values[5] !== '') {
+      const latValue = parseFloat(values[5])
+      if (!isNaN(latValue) && latValue !== 0) {
+        lat = latValue
+      }
+    }
+
+    if (values[6] !== undefined && values[6] !== '') {
+      const lngValue = parseFloat(values[6])
+      if (!isNaN(lngValue) && lngValue !== 0) {
+        lng = lngValue
+      }
+    }
+
     const date = values[13] || null
 
     sites.push({
