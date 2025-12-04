@@ -146,6 +146,12 @@ export default function Dashboard({ onLogout }) {
       </header>
 
       <div className="dashboard-content">
+        {loading && (
+          <div className="loading-overlay">
+            <div className="loading-spinner"></div>
+            <p>Loading sites data...</p>
+          </div>
+        )}
         <div className="left-content-panel">
           <div className="summary-cards-section">
             <SummaryCard title="Total Sites" count={allSites.length} variant="total" />
