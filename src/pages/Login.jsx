@@ -4,7 +4,6 @@ import '../styles/login.css'
 export default function Login({ onLoginSuccess }) {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [rememberMe, setRememberMe] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState('')
 
@@ -18,7 +17,18 @@ export default function Login({ onLoginSuccess }) {
         throw new Error('Please enter both email and password')
       }
 
-      console.log('Login attempt:', { email, password, rememberMe })
+      const validUsername = 'Hamdey'
+      const validPassword = '123456'
+
+      if (email !== validUsername && email !== validUsername.toLowerCase()) {
+        throw new Error('Invalid username or password')
+      }
+
+      if (password !== validPassword) {
+        throw new Error('Invalid username or password')
+      }
+
+      console.log('Login successful:', { email })
       await new Promise(resolve => setTimeout(resolve, 1500))
 
       if (onLoginSuccess) {
@@ -53,13 +63,13 @@ export default function Login({ onLoginSuccess }) {
         <form onSubmit={handleSubmit} className="login-form">
           <div className="form-group">
             <label htmlFor="email" className="form-label">
-              Email Address
+              Username
             </label>
             <input
-              type="email"
+              type="text"
               id="email"
               className="form-input"
-              placeholder="Enter your email"
+              placeholder="Enter your username"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
@@ -82,14 +92,6 @@ export default function Login({ onLoginSuccess }) {
           </div>
 
           <div className="form-options">
-            <label className="remember-checkbox">
-              <input
-                type="checkbox"
-                checked={rememberMe}
-                onChange={(e) => setRememberMe(e.target.checked)}
-              />
-              <span>Remember me</span>
-            </label>
             <a href="#" className="forgot-password-link">
               Forgot Password?
             </a>
@@ -104,14 +106,6 @@ export default function Login({ onLoginSuccess }) {
           </button>
         </form>
 
-        <div className="signup-section">
-          <p className="signup-text">
-            Don't have an account?{' '}
-            <a href="#" className="signup-link">
-              Sign Up
-            </a>
-          </p>
-        </div>
       </div>
 
       <div className="login-background-accent"></div>

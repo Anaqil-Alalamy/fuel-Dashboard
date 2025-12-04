@@ -1,0 +1,109 @@
+:root {
+  --primary-blue: #0099D8;
+  --dark-blue: #003366;
+  --white: #FFFFFF;
+  --border-gray: #E0E4E8;
+  --text-dark: #1A1A1A;
+  --text-light: #666666;
+}
+
+.summary-card {
+  background: var(--white);
+  border-radius: 8px;
+  padding: 14px 16px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  min-height: 85px;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.summary-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+}
+
+.card-content {
+  flex: 1;
+  z-index: 1;
+}
+
+.card-title {
+  font-size: 11px;
+  font-weight: 600;
+  color: #666666;
+  margin-bottom: 4px;
+  letter-spacing: 0.2px;
+  text-transform: uppercase;
+}
+
+.card-count {
+  font-size: 28px;
+  font-weight: 700;
+  margin: 0;
+  background: linear-gradient(135deg, var(--primary-blue) 0%, var(--dark-blue) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.card-icon {
+  font-size: 40px;
+  opacity: 0.15;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  right: -5px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.summary-card-total {
+  border-left: 4px solid var(--primary-blue);
+}
+
+.summary-card-today {
+  border-left: 4px solid #0099D8;
+}
+
+.summary-card-tomorrow {
+  border-left: 4px solid #fbbf24;
+}
+
+.summary-card-overdue {
+  border-left: 4px solid #ef4444;
+}
+
+@media (max-width: 768px) {
+  .summary-card {
+    padding: 12px 14px;
+    min-height: 80px;
+  }
+
+  .card-count {
+    font-size: 24px;
+  }
+
+  .card-icon {
+    font-size: 36px;
+  }
+}
+
+@media (max-width: 480px) {
+  .summary-card {
+    padding: 10px 12px;
+    min-height: 75px;
+  }
+
+  .card-count {
+    font-size: 22px;
+  }
+
+  .card-icon {
+    font-size: 32px;
+  }
+}

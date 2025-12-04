@@ -1,31 +1,116 @@
-import { useState } from 'react'
-import FuelingCard from '../components/FuelingCard'
-import FuelingTable from '../components/FuelingTable'
+import { useState, useEffect } from 'react'
+import SummaryCard from '../components/SummaryCard'
+import ExpandableTable from '../components/ExpandableTable'
+import SiteMap from '../components/SiteMap'
 import '../styles/dashboard.css'
 
-const mockData = {
-  today: [
-    { id: 1, siteName: 'GSM Downtown', fuelType: 'Diesel', quantity: '500L', status: 'pending' },
-    { id: 2, siteName: 'GSM Airport Hub', fuelType: 'Petrol', quantity: '300L', status: 'in-progress' },
-  ],
-  tomorrow: [
-    { id: 3, siteName: 'GSM North Terminal', fuelType: 'Diesel', quantity: '450L', status: 'scheduled' },
-    { id: 4, siteName: 'GSM East Port', fuelType: 'Petrol', quantity: '350L', status: 'scheduled' },
-  ],
-  comingIn3Days: [
-    { id: 5, siteName: 'GSM West Branch', fuelType: 'Diesel', quantity: '600L', status: 'scheduled' },
-    { id: 6, siteName: 'GSM Central Depot', fuelType: 'Petrol', quantity: '400L', status: 'scheduled' },
-    { id: 7, siteName: 'GSM South Station', fuelType: 'Diesel', quantity: '550L', status: 'scheduled' },
-  ],
-  due: [
-    { id: 8, siteName: 'GSM Harbor Facility', fuelType: 'Diesel', quantity: '700L', status: 'overdue', daysOverdue: 2 },
-    { id: 9, siteName: 'GSM Mountain Site', fuelType: 'Petrol', quantity: '250L', status: 'overdue', daysOverdue: 1 },
-  ],
+const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRDnTkwpbgsnY_i60u3ZleNs1DL3vMdG3fYHMrr5rwVDqMb3GpgKH40Y-7WQsEzEAi-wDHwLaimN8NC/pub?output=csv'
+
+const parseCSV = (csvText) => {
+  const lines = csvText.trim().split('\n')
+  const sites = []
+
+  for (let i = 1; i < lines.length; i++) {
+    const values = lines[i].split(',').map(v => v.trim().replace(/^"|"$/g, ''))
+    if (values.length < 14) continue
+
+    const siteName = values[0]
+    const lat = parseFloat(values[5])
+    const lng = parseFloat(values[6])
+    const date = values[13]
+
+    if (siteName && !isNaN(lat) && !isNaN(lng) && date) {
+      sites.push({
+        id: i,
+        siteName,
+        lat,
+        lng,
+        date,
+      })
+    }
+  }
+
+  return sites
+}
+
+const categorizeSites = (sites) => {
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
+
+  const tomorrow = new Date(today)
+  tomorrow.setDate(tomorrow.getDate() + 1)
+
+  const in3Days = new Date(today)
+  in3Days.setDate(in3Days.getDate() + 3)
+
+  const categorized = {
+    today: [],
+    tomorrow: [],
+    comingIn3Days: [],
+    due: [],
+  }
+
+  sites.forEach((site) => {
+    const siteDate = new Date(site.date)
+    siteDate.setHours(0, 0, 0, 0)
+
+    if (siteDate < today) {
+      categorized.due.push({ ...site, status: 'overdue' })
+    } else if (siteDate.getTime() === today.getTime()) {
+      categorized.today.push({ ...site, status: 'pending' })
+    } else if (siteDate.getTime() === tomorrow.getTime()) {
+      categorized.tomorrow.push({ ...site, status: 'scheduled' })
+    } else if (siteDate <= in3Days) {
+      categorized.comingIn3Days.push({ ...site, status: 'scheduled' })
+    }
+  })
+
+  return categorized
+}
+
+const fetchSitesData = async () => {
+  try {
+    const response = await fetch(CSV_URL)
+    const csvText = await response.text()
+    const sites = parseCSV(csvText)
+    return categorizeSites(sites)
+  } catch (error) {
+    console.error('Error fetching sites data:', error)
+    return {
+      today: [],
+      tomorrow: [],
+      comingIn3Days: [],
+      due: [],
+    }
+  }
 }
 
 export default function Dashboard({ onLogout }) {
-  const [viewMode, setViewMode] = useState('cards')
-  const [activeSection, setActiveSection] = useState('today')
+  const [expandedTables, setExpandedTables] = useState({ today: true, tomorrow: false, coming3days: false, due: false })
+  const [mockData, setMockData] = useState({
+    today: [],
+    tomorrow: [],
+    comingIn3Days: [],
+    due: [],
+  })
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const loadData = async () => {
+      setLoading(true)
+      const data = await fetchSitesData()
+      setMockData(data)
+      setLoading(false)
+    }
+
+    loadData()
+
+    const interval = setInterval(loadData, 2 * 60 * 1000)
+
+    return () => clearInterval(interval)
+  }, [])
+
+  const allSites = [...mockData.today, ...mockData.tomorrow, ...mockData.comingIn3Days, ...mockData.due]
 
   const handleLogout = () => {
     if (onLogout) {
@@ -33,38 +118,26 @@ export default function Dashboard({ onLogout }) {
     }
   }
 
-  const getSectionData = () => {
-    switch (activeSection) {
-      case 'today':
-        return mockData.today
-      case 'tomorrow':
-        return mockData.tomorrow
-      case 'coming3days':
-        return mockData.comingIn3Days
-      case 'due':
-        return mockData.due
-      default:
-        return []
-    }
+  const toggleTable = (section) => {
+    setExpandedTables(prev => ({
+      ...prev,
+      [section]: !prev[section]
+    }))
   }
-
-  const getSectionTitle = () => {
-    const titles = {
-      today: 'Today',
-      tomorrow: 'Tomorrow',
-      coming3days: 'Coming in 3 Days',
-      due: 'Due / Behind Schedule',
-    }
-    return titles[activeSection]
-  }
-
-  const sectionData = getSectionData()
 
   return (
     <div className="dashboard-container">
       <header className="dashboard-header">
+        <div className="header-accent-line"></div>
         <div className="header-content">
-          <div className="header-left">
+          <div className="header-logo-section">
+            <img
+              src="https://cdn.builder.io/api/v1/image/assets%2Fabc8ab05f7d144f289a582747d3e5ca3%2Fa9cbf8c7a3494e78810477f12dd379b5?format=webp&width=800"
+              alt="Company Logo"
+              className="header-logo"
+            />
+          </div>
+          <div className="header-center">
             <h1 className="dashboard-title">Fueling Dashboard</h1>
             <p className="dashboard-subtitle">GSM Sites Fueling Plan Management</p>
           </div>
@@ -75,75 +148,54 @@ export default function Dashboard({ onLogout }) {
       </header>
 
       <div className="dashboard-content">
-        <nav className="section-navigation">
-          <button
-            className={`section-tab ${activeSection === 'today' ? 'active' : ''}`}
-            onClick={() => setActiveSection('today')}
-          >
-            <span className="tab-label">Today</span>
-            <span className="tab-count">{mockData.today.length}</span>
-          </button>
-          <button
-            className={`section-tab ${activeSection === 'tomorrow' ? 'active' : ''}`}
-            onClick={() => setActiveSection('tomorrow')}
-          >
-            <span className="tab-label">Tomorrow</span>
-            <span className="tab-count">{mockData.tomorrow.length}</span>
-          </button>
-          <button
-            className={`section-tab ${activeSection === 'coming3days' ? 'active' : ''}`}
-            onClick={() => setActiveSection('coming3days')}
-          >
-            <span className="tab-label">Coming in 3 Days</span>
-            <span className="tab-count">{mockData.comingIn3Days.length}</span>
-          </button>
-          <button
-            className={`section-tab ${activeSection === 'due' ? 'active' : ''}`}
-            onClick={() => setActiveSection('due')}
-          >
-            <span className="tab-label">Due / Behind</span>
-            <span className="tab-count">{mockData.due.length}</span>
-          </button>
-        </nav>
+        {loading && (
+          <div className="loading-overlay">
+            <div className="loading-spinner"></div>
+            <p>Loading sites data...</p>
+          </div>
+        )}
+        <div className="left-content-panel">
+          <div className="summary-cards-section">
+            <SummaryCard title="Total Sites" count={allSites.length} variant="total" />
+            <SummaryCard title="Today" count={mockData.today.length} variant="today" />
+            <SummaryCard title="Tomorrow" count={mockData.tomorrow.length} variant="tomorrow" />
+            <SummaryCard title="Overdue" count={mockData.due.length} variant="overdue" />
+          </div>
 
-        <div className="section-header">
-          <h2 className="section-title">{getSectionTitle()}</h2>
-          <div className="view-toggles">
-            <button
-              className={`view-toggle ${viewMode === 'cards' ? 'active' : ''}`}
-              onClick={() => setViewMode('cards')}
-              title="Card View"
-            >
-              <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
-                <path d="M3 4a2 2 0 012-2h10a2 2 0 012 2v10a2 2 0 01-2 2H5a2 2 0 01-2-2V4z" />
-              </svg>
-            </button>
-            <button
-              className={`view-toggle ${viewMode === 'table' ? 'active' : ''}`}
-              onClick={() => setViewMode('table')}
-              title="Table View"
-            >
-              <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
-                <path d="M2 4a2 2 0 012-2h12a2 2 0 012 2v12a2 2 0 01-2 2H4a2 2 0 01-2-2V4zm2 2v2h2V6H4zm0 4v2h2v-2H4zm0 4v2h2v-2H4zm4-8v2h2V6H8zm0 4v2h2v-2H8zm0 4v2h2v-2H8zm4-8v2h2V6h-2zm0 4v2h2v-2h-2zm0 4v2h2v-2h-2z" />
-              </svg>
-            </button>
+          <div className="tables-container">
+            <ExpandableTable
+              title="Today"
+              data={mockData.today}
+              isExpanded={expandedTables.today}
+              onToggle={() => toggleTable('today')}
+              statusColor="blue"
+            />
+            <ExpandableTable
+              title="Tomorrow"
+              data={mockData.tomorrow}
+              isExpanded={expandedTables.tomorrow}
+              onToggle={() => toggleTable('tomorrow')}
+              statusColor="yellow"
+            />
+            <ExpandableTable
+              title="Coming in 3 Days"
+              data={mockData.comingIn3Days}
+              isExpanded={expandedTables.coming3days}
+              onToggle={() => toggleTable('coming3days')}
+              statusColor="green"
+            />
+            <ExpandableTable
+              title="Overdue"
+              data={mockData.due}
+              isExpanded={expandedTables.due}
+              onToggle={() => toggleTable('due')}
+              statusColor="red"
+            />
           </div>
         </div>
 
-        <div className="section-content">
-          {sectionData.length === 0 ? (
-            <div className="empty-state">
-              <p>No fueling plans scheduled for this period.</p>
-            </div>
-          ) : viewMode === 'cards' ? (
-            <div className="cards-grid">
-              {sectionData.map((item) => (
-                <FuelingCard key={item.id} data={item} section={activeSection} />
-              ))}
-            </div>
-          ) : (
-            <FuelingTable data={sectionData} section={activeSection} />
-          )}
+        <div className="site-map-container">
+          <SiteMap sites={allSites} />
         </div>
       </div>
     </div>
