@@ -24,6 +24,7 @@ export default function SiteMap({ sites }) {
       today: 'Today',
       comingSoon: 'Coming in 3 Days',
       due: 'Due',
+      unscheduled: 'Unscheduled',
     }
     return labels[status] || status
   }
