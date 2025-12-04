@@ -196,12 +196,9 @@ export default function Dashboard({ onLogout }) {
       setError(null)
       try {
         const data = await fetchSitesData()
-        if (data.today.length === 0 && data.comingIn3Days.length === 0 && data.due.length === 0) {
-          setError('No data found in the Google Sheet. Please check that the spreadsheet is published and accessible.')
-        }
         setMockData(data)
       } catch (err) {
-        setError(`Failed to fetch data: ${err.message}. Please check the browser console for details.`)
+        setError(`Failed to load data: ${err.message}. Please check the browser console for details.`)
         console.error('Failed to load data:', err)
       }
       setLoading(false)
