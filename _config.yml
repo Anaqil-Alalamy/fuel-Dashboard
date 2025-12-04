@@ -1,11 +1,25 @@
-# GitHub Pages configuration for the dashboard documentation site
-# This file is discovered by the Pages build in the repository root
-# and points Jekyll to the content inside the docs/ directory.
+# GitHub Pages configuration
+# This file configures Jekyll to build from the docs/ directory
 source: docs
+destination: docs/_site
+baseurl: /fuel-Dashboard
 
-# Basic site metadata
-
-# These values mirror the docs/_config.yml so local and CI builds stay consistent.
+# Site metadata
 title: Fuel Dashboard
 description: GSM Sites Fueling Plan Management
+author: GSM Team
 theme: jekyll-theme-primer
+
+# Jekyll settings
+markdown: kramdown
+highlighter: rouge
+permalink: pretty
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - node_modules
+  - package.json
+  - package-lock.json
+  - fuel-Dashboard
+  - src
+  - eslint.config.js
