@@ -123,16 +123,24 @@ const getMockFallbackData = () => {
 
 const fetchSitesData = async () => {
   try {
-    const proxyUrl = CORS_PROXY + encodeURIComponent(CSV_URL)
-    console.log('Attempting to fetch from CORS proxy')
+    console.log('Attempting to fetch from CSV URL')
 
     const controller = new AbortController()
-    const timeoutId = setTimeout(() => controller.abort(), 5000)
+    const timeoutId = setTimeout(() => controller.abort(), 8000)
 
-    const response = await fetch(proxyUrl, {
-      method: 'GET',
-      signal: controller.signal,
-    })
+    let response
+    try {
+      response = await fetch(CSV_URL, {
+        method: 'GET',
+        signal: controller.signal,
+      })
+    } catch (directFetchError) {
+      console.log('Direct fetch failed, trying CORS proxy...')
+      response = await fetch(CORS_PROXY + encodeURIComponent(CSV_URL), {
+        method: 'GET',
+        signal: controller.signal,
+      })
+    }
 
     clearTimeout(timeoutId)
     console.log('Response status:', response.status)
@@ -143,6 +151,11 @@ const fetchSitesData = async () => {
 
     const csvText = await response.text()
     console.log('CSV text length:', csvText.length)
+
+    if (!csvText || csvText.trim().length === 0) {
+      console.warn('CSV response is empty')
+      return getMockFallbackData()
+    }
 
     const sites = parseCSV(csvText)
     console.log('Parsed sites count:', sites.length)
