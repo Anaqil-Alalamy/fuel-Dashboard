@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react'
-import SummaryCard from '../components/SummaryCard'
-import ExpandableTable from '../components/ExpandableTable'
+import StatusCard from '../components/StatusCard'
 import SiteMap from '../components/SiteMap'
 import '../styles/dashboard.css'
 
@@ -14,9 +13,6 @@ const parseCSV = (csvText) => {
     console.error('CSV has no data rows')
     return sites
   }
-
-  console.log('CSV Header:', lines[0])
-  console.log('Total lines:', lines.length)
 
   for (let i = 1; i < lines.length; i++) {
     if (!lines[i].trim()) continue
@@ -51,8 +47,6 @@ const parseCSV = (csvText) => {
     const lng = parseFloat(values[6])
     const date = values[13]
 
-    console.log(`Row ${i}:`, { siteName, lat, lng, date })
-
     if (siteName && !isNaN(lat) && !isNaN(lng) && date) {
       sites.push({
         id: i,
@@ -63,8 +57,6 @@ const parseCSV = (csvText) => {
       })
     }
   }
-
-  console.log('Parsed sites:', sites)
   return sites
 }
 
@@ -85,15 +77,11 @@ const categorizeSites = (sites) => {
   const today = new Date()
   today.setHours(0, 0, 0, 0)
 
-  const tomorrow = new Date(today)
-  tomorrow.setDate(tomorrow.getDate() + 1)
-
   const in3Days = new Date(today)
   in3Days.setDate(in3Days.getDate() + 3)
 
   const categorized = {
     today: [],
-    tomorrow: [],
     comingIn3Days: [],
     due: [],
   }
@@ -103,13 +91,11 @@ const categorizeSites = (sites) => {
     if (!siteDate) return
 
     if (siteDate < today) {
-      categorized.due.push({ ...site, status: 'overdue' })
+      categorized.due.push({ ...site, status: 'due' })
     } else if (siteDate.getTime() === today.getTime()) {
-      categorized.today.push({ ...site, status: 'pending' })
-    } else if (siteDate.getTime() === tomorrow.getTime()) {
-      categorized.tomorrow.push({ ...site, status: 'scheduled' })
+      categorized.today.push({ ...site, status: 'today' })
     } else if (siteDate <= in3Days) {
-      categorized.comingIn3Days.push({ ...site, status: 'scheduled' })
+      categorized.comingIn3Days.push({ ...site, status: 'comingSoon' })
     }
   })
 
@@ -118,11 +104,10 @@ const categorizeSites = (sites) => {
 
 const fetchSitesData = async () => {
   try {
-    console.log('Fetching from:', CSV_URL)
     const response = await fetch(CSV_URL, {
       method: 'GET',
       headers: {
-        'Accept': 'text/csv',
+        Accept: 'text/csv',
       },
     })
 
@@ -131,13 +116,9 @@ const fetchSitesData = async () => {
     }
 
     const csvText = await response.text()
-    console.log('CSV fetched successfully, length:', csvText.length)
-    console.log('First 500 chars:', csvText.substring(0, 500))
-
     const sites = parseCSV(csvText)
     const categorized = categorizeSites(sites)
 
-    console.log('Categorized data:', categorized)
     return categorized
   } catch (error) {
     console.error('Error fetching sites data:', error)
@@ -146,10 +127,8 @@ const fetchSitesData = async () => {
 }
 
 export default function Dashboard({ onLogout }) {
-  const [expandedTables, setExpandedTables] = useState({ today: true, tomorrow: false, coming3days: false, due: false })
   const [mockData, setMockData] = useState({
     today: [],
-    tomorrow: [],
     comingIn3Days: [],
     due: [],
   })
@@ -162,7 +141,7 @@ export default function Dashboard({ onLogout }) {
       setError(null)
       try {
         const data = await fetchSitesData()
-        if (data.today.length === 0 && data.tomorrow.length === 0 && data.comingIn3Days.length === 0 && data.due.length === 0) {
+        if (data.today.length === 0 && data.comingIn3Days.length === 0 && data.due.length === 0) {
           setError('No data found in the Google Sheet. Please check that the spreadsheet is published and accessible.')
         }
         setMockData(data)
@@ -180,19 +159,13 @@ export default function Dashboard({ onLogout }) {
     return () => clearInterval(interval)
   }, [])
 
-  const allSites = [...mockData.today, ...mockData.tomorrow, ...mockData.comingIn3Days, ...mockData.due]
+  const allSites = [...mockData.today, ...mockData.comingIn3Days, ...mockData.due]
+  const comingSoon = [...mockData.comingIn3Days]
 
   const handleLogout = () => {
     if (onLogout) {
       onLogout()
     }
-  }
-
-  const toggleTable = (section) => {
-    setExpandedTables(prev => ({
-      ...prev,
-      [section]: !prev[section]
-    }))
   }
 
   return (
@@ -229,48 +202,38 @@ export default function Dashboard({ onLogout }) {
             <p>⚠️ Error loading data: {error}</p>
           </div>
         )}
-        <div className="left-content-panel">
-          <div className="summary-cards-section">
-            <SummaryCard title="Total Sites" count={allSites.length} variant="total" />
-            <SummaryCard title="Today" count={mockData.today.length} variant="today" />
-            <SummaryCard title="Tomorrow" count={mockData.tomorrow.length} variant="tomorrow" />
-            <SummaryCard title="Overdue" count={mockData.due.length} variant="overdue" />
-          </div>
 
-          <div className="tables-container">
-            <ExpandableTable
-              title="Today"
-              data={mockData.today}
-              isExpanded={expandedTables.today}
-              onToggle={() => toggleTable('today')}
-              statusColor="blue"
-            />
-            <ExpandableTable
-              title="Tomorrow"
-              data={mockData.tomorrow}
-              isExpanded={expandedTables.tomorrow}
-              onToggle={() => toggleTable('tomorrow')}
-              statusColor="yellow"
-            />
-            <ExpandableTable
-              title="Coming in 3 Days"
-              data={mockData.comingIn3Days}
-              isExpanded={expandedTables.coming3days}
-              onToggle={() => toggleTable('coming3days')}
-              statusColor="green"
-            />
-            <ExpandableTable
-              title="Overdue"
-              data={mockData.due}
-              isExpanded={expandedTables.due}
-              onToggle={() => toggleTable('due')}
-              statusColor="red"
-            />
+        <div className="dashboard-hero">
+          <div>
+            <p className="eyebrow">Overview</p>
+            <h2>Daily Fuel Plan at a Glance</h2>
+            <p className="hero-subtitle">All site commitments in one clean, modern view.</p>
           </div>
+          <div className="hero-pill">Live Sync</div>
         </div>
 
-        <div className="site-map-container">
-          <SiteMap sites={allSites} />
+        <div className="dashboard-grid">
+          <div className="cards-column">
+            <StatusCard title="Total Sites" count={allSites.length} accentColor="#38bdf8" data={allSites} />
+            <StatusCard title="Today" count={mockData.today.length} accentColor="#facc15" data={mockData.today} />
+            <StatusCard title="Coming in 3 Days" count={comingSoon.length} accentColor="#22c55e" data={comingSoon} />
+            <StatusCard title="Due" count={mockData.due.length} accentColor="#ef4444" data={mockData.due} />
+          </div>
+
+          <div className="map-panel">
+            <div className="map-header">
+              <div>
+                <p className="eyebrow">Live Map</p>
+                <h3>Fueling Commitments</h3>
+              </div>
+              <div className="map-legend">
+                <span className="legend-dot" style={{ background: '#facc15' }}></span> Today
+                <span className="legend-dot" style={{ background: '#ef4444' }}></span> Due
+                <span className="legend-dot" style={{ background: '#22c55e' }}></span> Coming in 3 Days
+              </div>
+            </div>
+            <SiteMap sites={allSites} />
+          </div>
         </div>
       </div>
     </div>

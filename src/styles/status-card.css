@@ -1,0 +1,135 @@
+:root {
+  --card-shadow: 0 12px 40px rgba(0, 0, 0, 0.06);
+  --card-border: #e8eef7;
+  --text-muted: #6b7280;
+  --text-strong: #0f172a;
+}
+
+.status-card {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 18px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: var(--card-shadow);
+  border: 1px solid var(--card-border);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.status-card__accent {
+  position: absolute;
+  inset: 0;
+  opacity: 0.05;
+}
+
+.status-card__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+  z-index: 1;
+}
+
+.status-card__label {
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  font-size: 12px;
+  color: var(--text-muted);
+  font-weight: 700;
+}
+
+.status-card__count {
+  margin: 4px 0 0;
+  font-size: 32px;
+  font-weight: 800;
+  color: var(--text-strong);
+}
+
+.status-card__badge {
+  font-size: 12px;
+  font-weight: 700;
+  padding: 8px 12px;
+  border-radius: 999px;
+  border: 1px solid currentColor;
+  background: #f8fafc;
+}
+
+.status-card__table-wrapper {
+  background: #f8fafc;
+  border-radius: 12px;
+  border: 1px solid #eef2f7;
+  position: relative;
+  z-index: 1;
+}
+
+.status-card__table-header {
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  padding: 10px 14px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.status-card__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.status-card__row {
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  padding: 10px 14px;
+  gap: 12px;
+  align-items: center;
+  border-bottom: 1px solid #eef2f7;
+  font-size: 14px;
+  color: var(--text-strong);
+}
+
+.status-card__row:last-child {
+  border-bottom: none;
+}
+
+.status-card__row span:first-child {
+  font-weight: 600;
+  color: #0b5394;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.status-card__row span:last-child {
+  text-align: right;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.status-card__empty {
+  padding: 16px 14px;
+  font-size: 13px;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+@media (max-width: 768px) {
+  .status-card {
+    padding: 16px;
+  }
+
+  .status-card__count {
+    font-size: 28px;
+  }
+
+  .status-card__row,
+  .status-card__table-header {
+    grid-template-columns: 1fr 0.8fr;
+  }
+}
