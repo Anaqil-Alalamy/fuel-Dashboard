@@ -85,6 +85,30 @@ const fetchSitesData = async () => {
 
 export default function Dashboard({ onLogout }) {
   const [expandedTables, setExpandedTables] = useState({ today: true, tomorrow: false, coming3days: false, due: false })
+  const [mockData, setMockData] = useState({
+    today: [],
+    tomorrow: [],
+    comingIn3Days: [],
+    due: [],
+  })
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const loadData = async () => {
+      setLoading(true)
+      const data = await fetchSitesData()
+      setMockData(data)
+      setLoading(false)
+    }
+
+    loadData()
+
+    const interval = setInterval(loadData, 2 * 60 * 1000)
+
+    return () => clearInterval(interval)
+  }, [])
+
+  const allSites = [...mockData.today, ...mockData.tomorrow, ...mockData.comingIn3Days, ...mockData.due]
 
   const handleLogout = () => {
     if (onLogout) {
