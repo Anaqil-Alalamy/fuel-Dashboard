@@ -6,7 +6,7 @@ export default function SiteMap({ sites }) {
   const getStatusColor = (status) => {
     switch (status) {
       case 'pending':
-        return '#0099D8'
+        return '#facc15'
       case 'in-progress':
         return '#0099D8'
       case 'scheduled':
