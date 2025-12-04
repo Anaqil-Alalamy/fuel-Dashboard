@@ -86,51 +86,53 @@ export default function Dashboard({ onLogout }) {
 
       <div className="dashboard-content">
         <div className="dashboard-main">
+          <div className="content-section">
+            <div className="stats-bar">
+              <div className="stat-card">
+                <span className="stat-label">Total Sites</span>
+                <span className="stat-value">{totalSites}</span>
+              </div>
+              {SECTIONS.map((section) => (
+                <div key={section.id} className="stat-card">
+                  <span className="stat-label">{section.label}</span>
+                  <span className="stat-value">{getSectionCount(section.id, organizedData)}</span>
+                </div>
+              ))}
+            </div>
+
+            <nav className="section-navigation">
+              {SECTIONS.map((section) => (
+                <button
+                  key={section.id}
+                  className={`section-tab ${activeSection === section.id ? 'active' : ''}`}
+                  onClick={() => setActiveSection(section.id)}
+                >
+                  <span className="tab-label">{section.label}</span>
+                  <span className="tab-count">{getSectionCount(section.id, organizedData)}</span>
+                </button>
+              ))}
+            </nav>
+
+            <div className="section-header">
+              <h2 className="section-title">{getSectionTitle()}</h2>
+            </div>
+
+            <div className="section-content">
+              {sectionData.length === 0 ? (
+                <div className="empty-state">
+                  <p>No fueling plans scheduled for this period.</p>
+                </div>
+              ) : (
+                <FuelingTable data={sectionData} section={activeSection} />
+              )}
+            </div>
+          </div>
+
           <div className="map-section">
             {showMap && <MapComponent sites={allData} />}
             <button className="toggle-map-button" onClick={() => setShowMap(!showMap)}>
               {showMap ? 'Hide Map' : 'Show Map'}
             </button>
-          </div>
-
-          <div className="stats-bar">
-            <div className="stat-card">
-              <span className="stat-label">Total Sites</span>
-              <span className="stat-value">{totalSites}</span>
-            </div>
-            {SECTIONS.map((section) => (
-              <div key={section.id} className="stat-card">
-                <span className="stat-label">{section.label}</span>
-                <span className="stat-value">{getSectionCount(section.id, organizedData)}</span>
-              </div>
-            ))}
-          </div>
-
-          <nav className="section-navigation">
-            {SECTIONS.map((section) => (
-              <button
-                key={section.id}
-                className={`section-tab ${activeSection === section.id ? 'active' : ''}`}
-                onClick={() => setActiveSection(section.id)}
-              >
-                <span className="tab-label">{section.label}</span>
-                <span className="tab-count">{getSectionCount(section.id, organizedData)}</span>
-              </button>
-            ))}
-          </nav>
-
-          <div className="section-header">
-            <h2 className="section-title">{getSectionTitle()}</h2>
-          </div>
-
-          <div className="section-content">
-            {sectionData.length === 0 ? (
-              <div className="empty-state">
-                <p>No fueling plans scheduled for this period.</p>
-              </div>
-            ) : (
-              <FuelingTable data={sectionData} section={activeSection} />
-            )}
           </div>
         </div>
       </div>
