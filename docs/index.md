@@ -11,7 +11,7 @@ A comprehensive fueling plan management system for GSM sites.
 
 ## Getting Started
 
-Visit the [Fuel Dashboard](/) to manage your fueling operations.
+Visit the [Fuel Dashboard]({{ site.baseurl }}/) to manage your fueling operations.
 
 ## Categories
 
