@@ -91,12 +91,6 @@ export default function Login({ onLoginSuccess }) {
             />
           </div>
 
-          <div className="form-options">
-            <a href="#" className="forgot-password-link">
-              Forgot Password?
-            </a>
-          </div>
-
           <button
             type="submit"
             className="login-button"
