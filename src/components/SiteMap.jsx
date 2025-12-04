@@ -44,12 +44,13 @@ export default function SiteMap({ sites }) {
     useEffect(() => {
       if (!map) return
 
-      if (points.length === 0) {
+      const validPoints = points.filter(p => p.lat && p.lng)
+      if (validPoints.length === 0) {
         map.setView(fallbackCenter, 5)
         return
       }
 
-      const bounds = points.map((point) => [point.lat, point.lng])
+      const bounds = validPoints.map((point) => [point.lat, point.lng])
       map.fitBounds(bounds, { padding: [40, 40] })
     }, [map, points, fallbackCenter])
 
