@@ -1,6 +1,6 @@
 import '../styles/fueling-card.css'
 
-export default function FuelingCard({ data, section }) {
+export default function FuelingCard({ data }) {
   const getStatusColor = (status) => {
     switch (status) {
       case 'pending':
