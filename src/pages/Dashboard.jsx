@@ -107,9 +107,7 @@ export default function Dashboard({ onLogout }) {
       </header>
 
       <div className="dashboard-main-wrapper">
-        <DashboardSidebar allData={dashboardData} />
-
-        <div className="dashboard-content">
+        <div className="dashboard-content-left">
           {error && <div className="data-error-notice">{error}</div>}
           <nav className="section-navigation">
             <button
@@ -183,7 +181,9 @@ export default function Dashboard({ onLogout }) {
           </div>
         </div>
 
-        <MapPanel allData={dashboardData} />
+        <div className="dashboard-map-right">
+          <MapPanel allData={dashboardData} />
+        </div>
       </div>
     </div>
   )
